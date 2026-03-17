@@ -9,25 +9,29 @@ import androidx.compose.runtime.Composable
 
 private val RecipesAppDarkColorScheme = darkColorScheme(
     primary = PrimaryColorDark,
-    secondary = AccentColorDark,
+    error = AccentColorDark,
+    onError = TextPrimaryColor,
     tertiary = AccentBlueDark,
+    tertiaryContainer = SliderTrackColor,
     background = BackgroundColorDark,
     surface = SurfaceColorDark,
     surfaceVariant = SurfaceVariantColorDark,
+    onSurfaceVariant = TextSecondaryColor,
     outline = DividerColorDark,
-    outlineVariant = SliderTrackColorDark,
     onPrimary = TextPrimaryColorDark,
     onSecondary = TextSecondaryColorDark,
 )
 private val RecipesAppLightColorScheme = lightColorScheme(
     primary = PrimaryColor,
-    secondary = AccentColor,
+    error = AccentColor,
+    onError = TextPrimaryColor,
     tertiary = AccentBlue,
+    tertiaryContainer = SliderTrackColorDark,
     background = BackgroundColor,
     surface = SurfaceColor,
     surfaceVariant = SurfaceVariantColor,
+    onSurfaceVariant = TextSecondaryColor,
     outline = DividerColor,
-    outlineVariant = SliderTrackColor,
     onPrimary = TextPrimaryColor,
     onSecondary = TextSecondaryColor,
 )
