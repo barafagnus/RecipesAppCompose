@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">RecipesAppCompose</string>
+    <string name="categories_button">Категории</string>
+    <string name="favorites_button">Избранное</string>
+</resources>
