@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import ru.vysokov.recipesappcompose.ui.categories.CategoriesScreen
 import ru.vysokov.recipesappcompose.ui.navigation.BottomNavigation
 import ru.vysokov.recipesappcompose.ui.theme.RecipesAppComposeTheme
 
@@ -34,10 +35,7 @@ fun RecipesApp() {
             when (currentScreen) {
                 ScreenId.CATEGORIES -> {
                     Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-                        Text(
-                            modifier = Modifier.align(Alignment.Center),
-                            text = "Категории"
-                        )
+                        CategoriesScreen()
                     }
                 }
                 ScreenId.FAVORITES -> {

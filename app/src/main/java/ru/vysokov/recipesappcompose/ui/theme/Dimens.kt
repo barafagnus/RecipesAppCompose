@@ -19,6 +19,7 @@ object Dimens {
 
     val paddingSmall = 8.dp
     val paddingMedium = 16.dp
+    val innerPadding = 10.dp
 
     val listItemPadding = 12.dp
     val toDividerSpacing = 8.dp
