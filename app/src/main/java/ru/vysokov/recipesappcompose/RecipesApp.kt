@@ -32,16 +32,22 @@ fun RecipesApp() {
             }
         ) { paddingValues ->
             when (currentScreen) {
-                ScreenId.CATEGORIES -> ScreenId.FAVORITES
-                ScreenId.FAVORITES -> ScreenId.CATEGORIES
-            }
-
-            Box(modifier = Modifier.fillMaxSize()) {
-                Text(modifier = Modifier
-                    .padding(paddingValues)
-                    .align(Alignment.Center),
-                    text = currentScreen.toString()
-                )
+                ScreenId.CATEGORIES -> {
+                    Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+                        Text(
+                            modifier = Modifier.align(Alignment.Center),
+                            text = "Категории"
+                        )
+                    }
+                }
+                ScreenId.FAVORITES -> {
+                    Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+                        Text(
+                            modifier = Modifier.align(Alignment.Center),
+                            text = "Избранное"
+                        )
+                    }
+                }
             }
         }
     }

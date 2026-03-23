@@ -3,6 +3,7 @@ package ru.vysokov.recipesappcompose.ui.navigation
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,10 +27,12 @@ fun BottomNavigation(
     onFavoritesClick: () -> Unit
 ) {
     Row(
-        modifier = Modifier.padding(
-            horizontal = Dimens.paddingMedium,
-            vertical = Dimens.paddingSmall
-        )
+        modifier = Modifier
+            .padding(
+                horizontal = Dimens.paddingMedium,
+                vertical = Dimens.paddingSmall
+            )
+            .navigationBarsPadding()
     ) {
         Button(
             modifier = Modifier
