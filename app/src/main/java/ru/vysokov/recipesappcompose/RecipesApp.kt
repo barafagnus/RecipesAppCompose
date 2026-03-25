@@ -4,16 +4,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import ru.vysokov.recipesappcompose.ui.categories.CategoriesScreen
+import ru.vysokov.recipesappcompose.ui.favorites.FavoritesScreen
 import ru.vysokov.recipesappcompose.ui.navigation.BottomNavigation
 import ru.vysokov.recipesappcompose.ui.theme.RecipesAppComposeTheme
 
@@ -40,10 +39,7 @@ fun RecipesApp() {
                 }
                 ScreenId.FAVORITES -> {
                     Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-                        Text(
-                            modifier = Modifier.align(Alignment.Center),
-                            text = "Избранное"
-                        )
+                        FavoritesScreen()
                     }
                 }
             }

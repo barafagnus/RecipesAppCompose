@@ -1,4 +1,4 @@
-package ru.vysokov.recipesappcompose.ui.components
+package ru.vysokov.recipesappcompose.core.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -60,6 +60,6 @@ fun ScreenHeaderPreview() {
     ScreenHeader(
         title = "Категории",
         contentDescription = "Категории",
-        imagePainter = painterResource(R.drawable.img_categories)
+        imagePainter = painterResource(R.drawable.bcg_categories)
     )
 }
