@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import ru.vysokov.recipesappcompose.R
 import ru.vysokov.recipesappcompose.core.ui.ScreenHeader
 import ru.vysokov.recipesappcompose.ui.theme.Dimens
@@ -20,8 +21,8 @@ fun RecipesScreen() {
         verticalArrangement = Arrangement.spacedBy(Dimens.paddingMedium)
     ) {
         ScreenHeader(
-            title = "Рецепты",
-            contentDescription = "Рецепты",
+            title = stringResource(R.string.recipes),
+            contentDescription = stringResource(R.string.recipes),
             imagePainter = painterResource(R.drawable.bcg_favorites)
         )
 

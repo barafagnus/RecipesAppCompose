@@ -2,4 +2,7 @@
     <string name="app_name">RecipesAppCompose</string>
     <string name="categories_button">Categories</string>
     <string name="favorites_button">Favorites</string>
+    <string name="favorites">Favorites</string>
+    <string name="categories">Categories</string>
+    <string name="recipes">Recipes</string>
 </resources>
