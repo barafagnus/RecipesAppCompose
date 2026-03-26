@@ -1,4 +1,4 @@
-package ru.vysokov.recipesappcompose.ui.categories
+package ru.vysokov.recipesappcompose.ui.recipes
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,21 +14,21 @@ import ru.vysokov.recipesappcompose.core.ui.ScreenHeader
 import ru.vysokov.recipesappcompose.ui.theme.Dimens
 
 @Composable
-fun CategoriesScreen() {
+fun RecipesScreen() {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(Dimens.paddingMedium)
     ) {
         ScreenHeader(
-            title = "Категории",
-            contentDescription = "Категории",
-            imagePainter = painterResource(R.drawable.bcg_categories)
+            title = "Рецепты",
+            contentDescription = "Рецепты",
+            imagePainter = painterResource(R.drawable.bcg_favorites)
         )
 
         LazyColumn(
             modifier = Modifier.padding(horizontal = Dimens.paddingMedium)
         ) {
-            item { Text(text = "Категория") }
+            item { Text(text = "Скоро здесь будет список рецептов") }
         }
     }
 }
