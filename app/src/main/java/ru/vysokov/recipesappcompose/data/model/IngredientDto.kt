@@ -1,7 +1,7 @@
 package ru.vysokov.recipesappcompose.data.model
 
 data class IngredientDto(
-    val quantity: String,
+    val quantity: Float,
     val unitOfMeasure: String,
     val description: String
 )
