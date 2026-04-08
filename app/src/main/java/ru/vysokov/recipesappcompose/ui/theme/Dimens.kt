@@ -10,6 +10,8 @@ object Dimens {
     val buttonContentPadding = 10.dp
     val buttonHorizontalSpacing = 4.dp
 
+    val cardElevation = 2.dp
+
     val buttonHeight = 36.dp
 
     val cornerRadiusNormal = 8.dp
@@ -39,6 +41,7 @@ object Dimens {
     val favoritesIconHeight = 30.dp
 
     val iconMediumSize = 24.dp
+    val spacerSmall = 8.dp
     val spacerMedium = 10.dp
 
     val sliderTrackHeight = 16.dp

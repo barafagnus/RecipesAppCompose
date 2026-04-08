@@ -6,12 +6,10 @@ import ru.vysokov.recipesappcompose.data.model.IngredientDto
 @Immutable
 data class IngredientsUiModel(
     val name: String,
-    val quantity: String,
-    val unitOfMeasure: String
+    val amount: String
 )
 
 fun IngredientDto.toUiModel() = IngredientsUiModel(
     name = description,
-    quantity = quantity,
-    unitOfMeasure = unitOfMeasure
+    amount = "$quantity $unitOfMeasure"
 )
