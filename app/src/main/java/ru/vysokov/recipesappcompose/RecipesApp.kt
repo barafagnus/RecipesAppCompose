@@ -34,7 +34,9 @@ fun RecipesApp() {
             when (currentScreen) {
                 ScreenId.CATEGORIES -> {
                     Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-                        CategoriesScreen()
+                        CategoriesScreen(
+                            onCategoryClick = {},
+                        )
                     }
                 }
                 ScreenId.FAVORITES -> {

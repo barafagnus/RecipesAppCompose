@@ -43,6 +43,13 @@ val recipesAppTypography = Typography(
         letterSpacing = 0.sp,
         lineHeight = 19.sp
     ),
+    titleSmall = TextStyle(
+        fontFamily = montserratAlternatesFontFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 14.sp,
+        letterSpacing = 0.sp,
+        lineHeight = 16.sp
+    ),
     displayLarge = TextStyle(
         fontFamily = montserratAlternatesFontFamily,
         fontWeight = FontWeight.SemiBold,
