@@ -2,8 +2,8 @@ package ru.vysokov.recipesappcompose.ui.categories
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -19,11 +19,10 @@ import ru.vysokov.recipesappcompose.ui.theme.Dimens
 @Composable
 fun CategoriesScreen(
     modifier: Modifier = Modifier,
-    onCategoryClick: (Int) -> Unit
+    onCategoryClick: (Int, String) -> Unit
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(Dimens.paddingMedium)
     ) {
         ScreenHeader(
             title = stringResource(R.string.categories),
@@ -32,7 +31,8 @@ fun CategoriesScreen(
         )
 
         LazyVerticalGrid(
-            modifier = Modifier.padding(horizontal = Dimens.paddingMedium),
+            modifier = Modifier,
+            contentPadding = PaddingValues(Dimens.paddingMedium),
             columns = GridCells.Fixed(2),
             horizontalArrangement = Arrangement.spacedBy(Dimens.paddingMedium),
             verticalArrangement = Arrangement.spacedBy(Dimens.paddingMedium),
@@ -40,7 +40,7 @@ fun CategoriesScreen(
             items(items = RecipesRepositoryStub.getCategories()) { item ->
                 CategoryItem(
                     category = item.toUiModel(),
-                    onClick = {}
+                    onClick = { onCategoryClick(item.id, item.title) }
                 )
             }
         }

@@ -1,8 +1,6 @@
-package ru.vysokov.recipesappcompose.ui.categories
+package ru.vysokov.recipesappcompose.ui.recipes
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -12,6 +10,9 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -24,65 +25,58 @@ import ru.vysokov.recipesappcompose.ui.theme.Dimens
 import ru.vysokov.recipesappcompose.ui.theme.RecipesAppComposeTheme
 
 @Composable
-fun CategoryItem(
+fun RecipeItem(
     modifier: Modifier = Modifier,
-    category: CategoryUiModel,
-    onClick: () -> Unit,
+    model: RecipeUiModel,
+    onClick: (Int) -> Unit,
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(Dimens.cornerRadiusNormal),
         colors = (CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)),
         elevation = CardDefaults.cardElevation(defaultElevation = Dimens.cardElevation),
-        onClick = onClick
+        onClick = { onClick(model.id) }
     ) {
-        Column {
+        Column() {
             AsyncImage(
                 modifier = Modifier
-                    .aspectRatio(1.2f)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .height(Dimens.recipeCardImageWidth),
                 contentScale = ContentScale.Crop,
-                model = category.imageUrl,
+                model = model.imageUrl,
                 contentDescription = "",
                 placeholder = painterResource(R.drawable.img_placeholder),
                 error = painterResource(R.drawable.img_error)
             )
 
-            Spacer(modifier = Modifier.height(Dimens.spacerSmall))
-
             Text(
                 modifier = Modifier
-                    .padding(horizontal = Dimens.paddingSmall),
-                text = category.title.uppercase(),
+                    .padding(Dimens.paddingSmall),
+                text = model.title.uppercase(),
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Spacer(modifier = Modifier.height(Dimens.spacerSmall))
-
-            Text(
-                modifier = Modifier
-                    .padding(horizontal = Dimens.paddingSmall),
-                text = category.description,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                minLines = 3,
-                maxLines = 3,
+                color = MaterialTheme.colorScheme.primary,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-
-            Spacer(modifier = Modifier.height(Dimens.spacerSmall))
         }
     }
 }
 
 @Composable
 @Preview(showBackground = true)
-fun CategoryItemPreview() {
+fun RecipeItemPreview() {
     RecipesAppComposeTheme {
-        CategoryItem(
-            category = RecipesRepositoryStub.getCategories()[0].toUiModel(),
+        val stub by remember {
+            mutableStateOf(RecipesRepositoryStub.getRecipesByCategoryId(0)[0].toUiModel())
+        }
+        RecipeItem(
+            model = RecipeUiModel(
+                id = stub.id,
+                title = stub.title,
+                ingredients = stub.ingredients,
+                method = stub.method,
+                imageUrl = stub.imageUrl
+            ),
             onClick = {}
         )
     }
