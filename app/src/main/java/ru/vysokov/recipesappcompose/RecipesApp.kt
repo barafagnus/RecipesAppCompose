@@ -1,27 +1,31 @@
 package ru.vysokov.recipesappcompose
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryStub
 import ru.vysokov.recipesappcompose.ui.categories.CategoriesScreen
 import ru.vysokov.recipesappcompose.ui.favorites.FavoritesScreen
 import ru.vysokov.recipesappcompose.ui.navigation.BottomNavigation
+import ru.vysokov.recipesappcompose.ui.navigation.Destination
 import ru.vysokov.recipesappcompose.ui.recipes.RecipesScreen
 import ru.vysokov.recipesappcompose.ui.theme.RecipesAppComposeTheme
 
 @Composable
 fun RecipesApp() {
-    var currentScreen by remember { mutableStateOf(ScreenId.CATEGORIES) }
-    var selectedCategoryId by remember { mutableStateOf<Int?>(null) }
-    var selectedCategoryTitle by remember { mutableStateOf("") }
+    val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
     RecipesAppComposeTheme {
         Scaffold(
@@ -29,49 +33,68 @@ fun RecipesApp() {
                 .fillMaxSize(),
             bottomBar = {
                 BottomNavigation(
-                    onCategoriesClick = { currentScreen = ScreenId.CATEGORIES },
-                    onFavoritesClick = { currentScreen = ScreenId.FAVORITES }
+                    onCategoriesClick = {
+                        if (currentRoute != Destination.Categories.route) {
+                            navController.navigate(Destination.Categories.route) {
+                                popUpTo(navController.graph.startDestinationId)
+                                launchSingleTop = true
+                            }
+                        }
+                    },
+                    onFavoritesClick = {
+                        if (currentRoute != Destination.Favorites.route) {
+                            navController.navigate(Destination.Favorites.route) {
+                                popUpTo(navController.graph.startDestinationId)
+                                launchSingleTop = true
+                            }
+                        }
+                    }
                 )
             }
         ) { paddingValues ->
-            when (currentScreen) {
-                ScreenId.CATEGORIES -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues)
-                    ) {
-                        CategoriesScreen(
-                            onCategoryClick = { categoryId, categoryTitle, ->
-                                selectedCategoryId = categoryId
-                                selectedCategoryTitle = categoryTitle
-                                currentScreen = ScreenId.RECIPES
-                            },
-                        )
-                    }
+            NavHost(
+                modifier = Modifier.padding(paddingValues),
+                navController = navController,
+                startDestination = Destination.Categories.route
+            ) {
+                composable(
+                    route = Destination.Categories.route
+                ) {
+                    CategoriesScreen(
+                        onCategoryClick = { categoryId, categoryTitle ->
+                            navController.navigate(
+                                Destination.Recipes.createRoute(
+                                    categoryId,
+                                    categoryTitle
+                                )
+                            )
+                        },
+                    )
                 }
 
-                ScreenId.RECIPES -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues)
-                    ) {
-                        RecipesScreen(
-                            categoryId = selectedCategoryId ?: error("Category ID is required."),
-                            categoryTitle = selectedCategoryTitle,
-                        )
-                    }
+                composable(
+                    route = Destination.Recipes.route,
+                    arguments = listOf(
+                        navArgument("categoryId") { type = NavType.IntType },
+                        navArgument("categoryTitle") { type = NavType.StringType },
+                    )
+                ) { backStackEntry ->
+                    val categoryId = backStackEntry.arguments?.getInt("categoryId")
+                        ?: error("Category ID is required.")
+                    val title = RecipesRepositoryStub.getCategoryById(categoryId)?.title ?: error("Category ID is required.")
+
+                    RecipesScreen(
+                        categoryId = categoryId,
+                        categoryTitle = backStackEntry.arguments?.getString("categoryTitle")
+                            ?: error("Title is required."),
+                        onRecipeClick = {} // TODO open RecipeDetails
+                    )
                 }
 
-                ScreenId.FAVORITES -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues)
-                    ) {
-                        FavoritesScreen()
-                    }
+                composable(
+                    route = Destination.Favorites.route
+                ) {
+                    FavoritesScreen()
                 }
             }
         }
