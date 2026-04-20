@@ -19,7 +19,7 @@ import ru.vysokov.recipesappcompose.ui.theme.Dimens
 @Composable
 fun CategoriesScreen(
     modifier: Modifier = Modifier,
-    onCategoryClick: (Int, String) -> Unit
+    onCategoryClick: (Int) -> Unit
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
@@ -40,7 +40,7 @@ fun CategoriesScreen(
             items(items = RecipesRepositoryStub.getCategories()) { item ->
                 CategoryItem(
                     category = item.toUiModel(),
-                    onClick = { onCategoryClick(item.id, item.title) }
+                    onClick = { onCategoryClick(item.id) }
                 )
             }
         }
