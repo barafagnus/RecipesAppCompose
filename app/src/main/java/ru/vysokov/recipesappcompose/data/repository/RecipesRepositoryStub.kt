@@ -4,9 +4,10 @@ import ru.vysokov.recipesappcompose.data.model.CategoryDto
 import ru.vysokov.recipesappcompose.data.model.IngredientDto
 import ru.vysokov.recipesappcompose.data.model.RecipeDto
 
-
 object RecipesRepositoryStub {
     fun getCategories(): List<CategoryDto> = categories
+
+    fun getCategoryById(categoryId: Int?) = categories.find { it.id == categoryId }
 
     fun getRecipesByCategoryId(categoryId: Int): List<RecipeDto> {
         return when (categoryId) {
