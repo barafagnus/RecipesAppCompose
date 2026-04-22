@@ -29,7 +29,7 @@ import ru.vysokov.recipesappcompose.ui.theme.Dimens
 fun RecipesScreen(
     categoryId: Int?,
     categoryTitle: String,
-    onRecipeClick: (Int) -> Unit,
+    onRecipeClick: (Int, RecipeUiModel) -> Unit,
 ) {
     var recipes by remember { mutableStateOf<List<RecipeUiModel>>(emptyList()) }
     var isLoading by remember { mutableStateOf(false) }
@@ -76,7 +76,7 @@ fun RecipesScreen(
                 items(items = recipes, key = { it.id }) { recipe ->
                     RecipeItem(
                         model = recipe,
-                        onClick = { onRecipeClick(recipe.id) }
+                        onClick = { onRecipeClick(recipe.id, recipe) }
                     )
                 }
             }

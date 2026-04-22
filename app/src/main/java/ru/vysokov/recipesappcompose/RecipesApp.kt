@@ -13,11 +13,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import ru.vysokov.recipesappcompose.core.Constants
 import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryStub
 import ru.vysokov.recipesappcompose.ui.categories.CategoriesScreen
+import ru.vysokov.recipesappcompose.ui.details.RecipeDetailsScreen
 import ru.vysokov.recipesappcompose.ui.favorites.FavoritesScreen
 import ru.vysokov.recipesappcompose.ui.navigation.BottomNavigation
 import ru.vysokov.recipesappcompose.ui.navigation.Destination
+import ru.vysokov.recipesappcompose.ui.recipes.RecipeUiModel
 import ru.vysokov.recipesappcompose.ui.recipes.RecipesScreen
 import ru.vysokov.recipesappcompose.ui.theme.RecipesAppComposeTheme
 
@@ -61,11 +64,10 @@ fun RecipesApp() {
                     route = Destination.Categories.route
                 ) {
                     CategoriesScreen(
-                        onCategoryClick = { categoryId, categoryTitle ->
+                        onCategoryClick = { categoryId ->
                             navController.navigate(
                                 Destination.Recipes.createRoute(
-                                    categoryId,
-                                    categoryTitle
+                                    categoryId
                                 )
                             )
                         },
@@ -76,18 +78,25 @@ fun RecipesApp() {
                     route = Destination.Recipes.route,
                     arguments = listOf(
                         navArgument("categoryId") { type = NavType.IntType },
-                        navArgument("categoryTitle") { type = NavType.StringType },
                     )
                 ) { backStackEntry ->
                     val categoryId = backStackEntry.arguments?.getInt("categoryId")
                         ?: error("Category ID is required.")
-                    val title = RecipesRepositoryStub.getCategoryById(categoryId)?.title ?: error("Category ID is required.")
+                    val title = RecipesRepositoryStub.getCategoryById(categoryId)?.title
+                        ?: error("Category ID is required.")
 
                     RecipesScreen(
                         categoryId = categoryId,
-                        categoryTitle = backStackEntry.arguments?.getString("categoryTitle")
-                            ?: error("Title is required."),
-                        onRecipeClick = {} // TODO open RecipeDetails
+                        categoryTitle = title,
+                        onRecipeClick = { recipeId, recipe ->
+                            backStackEntry?.savedStateHandle?.set(
+                                Constants.KEY_RECIPE_OBJECT,
+                                recipe
+                            )
+                            navController.navigate(
+                                Destination.RecipeDetails.createRoute(recipeId)
+                            )
+                        }
                     )
                 }
 
@@ -95,6 +104,16 @@ fun RecipesApp() {
                     route = Destination.Favorites.route
                 ) {
                     FavoritesScreen()
+                }
+
+                composable(
+                    route = Destination.RecipeDetails.route
+                ) {
+                    RecipeDetailsScreen(
+                        recipe = navController.previousBackStackEntry?.savedStateHandle?.get<RecipeUiModel>(
+                            Constants.KEY_RECIPE_OBJECT
+                        ) ?: error("Recipe object is required.")
+                    )
                 }
             }
         }
