@@ -20,9 +20,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import coil3.compose.rememberAsyncImagePainter
 import ru.vysokov.recipesappcompose.R
 import ru.vysokov.recipesappcompose.core.ui.ScreenHeader
 import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryStub
+import ru.vysokov.recipesappcompose.ui.categories.toUiModel
 import ru.vysokov.recipesappcompose.ui.theme.Dimens
 
 @Composable
@@ -33,6 +35,9 @@ fun RecipesScreen(
 ) {
     var recipes by remember { mutableStateOf<List<RecipeUiModel>>(emptyList()) }
     var isLoading by remember { mutableStateOf(false) }
+    val categoryImageUrl = remember(categoryId) {
+        RecipesRepositoryStub.getCategoryById(categoryId)?.toUiModel()?.imageUrl
+    }
 
     LaunchedEffect(categoryId) {
         isLoading = true
@@ -53,7 +58,9 @@ fun RecipesScreen(
         ScreenHeader(
             title = categoryTitle,
             contentDescription = stringResource(R.string.recipes),
-            imagePainter = painterResource(R.drawable.bcg_favorites)
+            imagePainter = rememberAsyncImagePainter(
+                model = categoryImageUrl ?: painterResource(R.drawable.bcg_favorites)
+            )
         )
 
         if (isLoading) {
@@ -64,7 +71,7 @@ fun RecipesScreen(
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(
-                   color = MaterialTheme.colorScheme.primary,
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
         } else {

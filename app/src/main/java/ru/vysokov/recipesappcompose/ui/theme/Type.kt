@@ -22,6 +22,13 @@ val recipesAppTypography = Typography(
         letterSpacing = 0.sp,
         lineHeight = 19.5.sp
     ),
+    labelMedium = TextStyle(
+        fontFamily = montserratFontFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp,
+        letterSpacing = 0.sp,
+        lineHeight = 19.5.sp
+    ),
     bodySmall = TextStyle(
         fontFamily = montserratFontFamily,
         fontWeight = FontWeight.Medium,

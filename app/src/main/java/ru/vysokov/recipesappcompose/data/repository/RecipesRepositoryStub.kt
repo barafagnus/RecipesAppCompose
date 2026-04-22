@@ -9,6 +9,12 @@ object RecipesRepositoryStub {
 
     fun getCategoryById(categoryId: Int?) = categories.find { it.id == categoryId }
 
+    fun getRecipeById(recipeId: Int?): RecipeDto? {
+        return sequenceOf(
+            burgerRecipes, dessertRecipes, pizzaRecipes, fishRecipes, soupRecipes, saladRecipes
+        ).flatten().find { it.id == recipeId }
+    }
+
     fun getRecipesByCategoryId(categoryId: Int): List<RecipeDto> {
         return when (categoryId) {
             0 -> burgerRecipes
