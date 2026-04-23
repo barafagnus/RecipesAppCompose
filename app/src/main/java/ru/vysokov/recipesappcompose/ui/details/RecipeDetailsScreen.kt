@@ -67,18 +67,6 @@ fun RecipeDetailsScreen(
                 }
             )
 
-//            ScreenHeader(
-//                title = recipeState.title,
-//                contentDescription = recipeState.title,
-//                imagePainter = painterResource(R.drawable.bcg_categories),
-//                favoritesButton = {
-//                    FavoritesButton(
-//                        isFavorite = isFavoriteState,
-//                        onClick = { isFavoriteState = !isFavoriteState },
-//                    )
-//                }
-//            )
-
             Spacer(modifier = Modifier.height(Dimens.paddingMedium))
 
             PortionsSelector(
