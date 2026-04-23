@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavType
@@ -109,11 +110,16 @@ fun RecipesApp() {
                 composable(
                     route = Destination.RecipeDetails.route
                 ) {
-                    RecipeDetailsScreen(
-                        recipe = navController.previousBackStackEntry?.savedStateHandle?.get<RecipeUiModel>(
+                    val recipe = remember {
+                        navController.previousBackStackEntry?.savedStateHandle?.get<RecipeUiModel>(
                             Constants.KEY_RECIPE_OBJECT
-                        ) ?: error("Recipe object is required.")
-                    )
+                        )
+                    }
+                    recipe?.let {
+                        RecipeDetailsScreen(
+                            recipe = recipe
+                        )
+                    }
                 }
             }
         }
