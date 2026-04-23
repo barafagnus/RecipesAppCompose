@@ -18,9 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import coil3.compose.rememberAsyncImagePainter
 import ru.vysokov.recipesappcompose.R
 import ru.vysokov.recipesappcompose.core.ui.ScreenHeader
 import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryStub
@@ -58,10 +56,8 @@ fun RecipesScreen(
         ScreenHeader(
             title = categoryTitle,
             contentDescription = stringResource(R.string.recipes),
-            imagePainter = rememberAsyncImagePainter(
-                model = categoryImageUrl ?: painterResource(R.drawable.bcg_favorites)
+            imageModel = categoryImageUrl ?: R.drawable.bcg_favorites
             )
-        )
 
         if (isLoading) {
             Box(

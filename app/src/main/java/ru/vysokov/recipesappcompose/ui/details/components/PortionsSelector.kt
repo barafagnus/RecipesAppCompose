@@ -15,7 +15,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import ru.vysokov.recipesappcompose.R
 import ru.vysokov.recipesappcompose.ui.theme.Dimens
 import kotlin.math.roundToInt
 
@@ -35,7 +37,7 @@ fun PortionsSelector(
     )
     Column(modifier = modifier) {
         Text(
-            text = "Ингредиенты".uppercase(),
+            text = stringResource(R.string.ingredients).uppercase(),
             style = MaterialTheme.typography.displayLarge,
             color = MaterialTheme.colorScheme.primary,
         )

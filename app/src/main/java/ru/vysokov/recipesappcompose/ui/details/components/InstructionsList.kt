@@ -15,7 +15,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import ru.vysokov.recipesappcompose.R
 import ru.vysokov.recipesappcompose.ui.theme.Dimens
 
 @Composable
@@ -28,7 +30,7 @@ fun InstructionsList(
             .fillMaxWidth()
     ) {
         Text(
-            text = "Способ приготовления".uppercase(),
+            text = stringResource(R.string.method_of_preparation).uppercase(),
             style = MaterialTheme.typography.displayLarge,
             color = MaterialTheme.colorScheme.primary,
         )

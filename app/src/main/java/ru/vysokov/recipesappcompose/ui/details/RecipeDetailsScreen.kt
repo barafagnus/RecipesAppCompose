@@ -14,8 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import ru.vysokov.recipesappcompose.R
+import ru.vysokov.recipesappcompose.core.ui.FavoritesButton
 import ru.vysokov.recipesappcompose.core.ui.ScreenHeader
 import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryStub
 import ru.vysokov.recipesappcompose.ui.details.components.ErrorPlaceholder
@@ -33,6 +32,7 @@ fun RecipeDetailsScreen(
 ) {
     val recipeState = remember { RecipesRepositoryStub.getRecipeById(recipe.id)?.toUiModel() }
     var currentPortions by rememberSaveable { mutableStateOf(1) }
+    var isFavoriteState by remember { mutableStateOf(false) }
 
     val scaledIngredients = remember(currentPortions) {
         recipeState?.ingredients?.map { ingredients ->
@@ -58,8 +58,26 @@ fun RecipeDetailsScreen(
             ScreenHeader(
                 title = recipeState.title,
                 contentDescription = recipeState.title,
-                imagePainter = painterResource(R.drawable.bcg_categories)
+                imageModel = recipeState.imageUrl,
+                favoritesButton = {
+                    FavoritesButton(
+                        isFavorite = isFavoriteState,
+                        onClick = { isFavoriteState = !isFavoriteState },
+                    )
+                }
             )
+
+//            ScreenHeader(
+//                title = recipeState.title,
+//                contentDescription = recipeState.title,
+//                imagePainter = painterResource(R.drawable.bcg_categories),
+//                favoritesButton = {
+//                    FavoritesButton(
+//                        isFavorite = isFavoriteState,
+//                        onClick = { isFavoriteState = !isFavoriteState },
+//                    )
+//                }
+//            )
 
             Spacer(modifier = Modifier.height(Dimens.paddingMedium))
 
