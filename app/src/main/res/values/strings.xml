@@ -5,4 +5,6 @@
     <string name="favorites">Favorites</string>
     <string name="categories">Categories</string>
     <string name="recipes">Recipes</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="method_of_preparation">Method of preparation</string>
 </resources>

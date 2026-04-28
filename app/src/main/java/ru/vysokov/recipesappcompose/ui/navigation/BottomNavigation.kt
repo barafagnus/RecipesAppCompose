@@ -71,7 +71,7 @@ fun BottomNavigation(
                 color = MaterialTheme.colorScheme.surface
             )
 
-            Spacer(modifier = Modifier.width(Dimens.spacerMedium))
+            Spacer(modifier = Modifier.width(Dimens.spacerLarge))
 
             Icon(
                 painter = painterResource(R.drawable.ic_heart_empty),

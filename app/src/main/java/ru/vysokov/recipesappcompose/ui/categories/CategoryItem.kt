@@ -49,7 +49,7 @@ fun CategoryItem(
                 error = painterResource(R.drawable.img_error)
             )
 
-            Spacer(modifier = Modifier.height(Dimens.spacerSmall))
+            Spacer(modifier = Modifier.height(Dimens.spacerMedium))
 
             Text(
                 modifier = Modifier
@@ -59,7 +59,7 @@ fun CategoryItem(
                 color = MaterialTheme.colorScheme.primary
             )
 
-            Spacer(modifier = Modifier.height(Dimens.spacerSmall))
+            Spacer(modifier = Modifier.height(Dimens.spacerMedium))
 
             Text(
                 modifier = Modifier
@@ -72,7 +72,7 @@ fun CategoryItem(
                 overflow = TextOverflow.Ellipsis
             )
 
-            Spacer(modifier = Modifier.height(Dimens.spacerSmall))
+            Spacer(modifier = Modifier.height(Dimens.spacerMedium))
         }
     }
 }

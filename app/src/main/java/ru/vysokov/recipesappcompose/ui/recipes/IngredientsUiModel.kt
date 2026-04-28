@@ -9,10 +9,12 @@ import ru.vysokov.recipesappcompose.data.model.IngredientDto
 @Parcelize
 data class IngredientsUiModel(
     val name: String,
-    val amount: String
+    val amount: String,
+    val unitOfMeasure: String
 ): Parcelable
 
 fun IngredientDto.toUiModel() = IngredientsUiModel(
     name = description,
-    amount = "$quantity $unitOfMeasure"
+    amount = quantity,
+    unitOfMeasure = unitOfMeasure
 )

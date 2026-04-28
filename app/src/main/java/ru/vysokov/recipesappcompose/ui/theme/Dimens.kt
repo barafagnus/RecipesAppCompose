@@ -15,6 +15,7 @@ object Dimens {
     val buttonHeight = 36.dp
 
     val cornerRadiusNormal = 8.dp
+    val cornerRadiusSmall = 2.dp
 
     val innerContentPadding = 6.dp
     val titlePadding = 16.dp
@@ -37,12 +38,14 @@ object Dimens {
     val favoritesButtonIconWidth = 21.dp
     val favoritesButtonIconHeight = 18.dp
 
-    val favoritesIconWidth = 35.dp
-    val favoritesIconHeight = 30.dp
+    val favoritesIconSize = 40.dp
 
     val iconMediumSize = 24.dp
-    val spacerSmall = 8.dp
-    val spacerMedium = 10.dp
+
+    val spacerMid = 6.dp
+    val spacerSmall = 4.dp
+    val spacerMedium = 8.dp
+    val spacerLarge = 10.dp
 
     val sliderTrackHeight = 16.dp
     val sliderLeverWidth = 8.dp
