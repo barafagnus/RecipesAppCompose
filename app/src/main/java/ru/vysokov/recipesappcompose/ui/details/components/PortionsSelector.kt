@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderColors
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,14 +30,7 @@ fun PortionsSelector(
     currentPortions: Int,
     onPortionsChange: (Int) -> Unit
 ) {
-    val sliderColors =
-        SliderDefaults.colors(
-            thumbColor = MaterialTheme.colorScheme.tertiary,
-            activeTrackColor = MaterialTheme.colorScheme.tertiaryContainer,
-            inactiveTrackColor = MaterialTheme.colorScheme.tertiaryContainer,
-            activeTickColor = Color.Transparent,
-            inactiveTickColor = Color.Transparent
-        )
+    val sliderColors = SliderDefaults.sliderColors()
 
     Column(modifier = modifier) {
         Text(
@@ -84,4 +78,17 @@ fun PortionsSelector(
             }
         )
     }
+}
+
+@Composable
+fun SliderDefaults.sliderColors(): SliderColors {
+    val customColors = colors(
+        thumbColor = MaterialTheme.colorScheme.tertiary,
+        activeTrackColor = MaterialTheme.colorScheme.tertiaryContainer,
+        inactiveTrackColor = MaterialTheme.colorScheme.tertiaryContainer,
+        activeTickColor = Color.Transparent,
+        inactiveTickColor = Color.Transparent
+    )
+
+    return remember(customColors) { customColors }
 }

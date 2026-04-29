@@ -37,8 +37,10 @@ fun RecipesApp(deepLinkIntent: Intent?) {
             val recipeId: Int? = when (uri.scheme) {
                 "recipeapp" ->
                     if (uri.host == "recipe") uri.pathSegments[0].toIntOrNull() else null
+
                 "https", "http" ->
                     if (uri.pathSegments[0] == "recipe") uri.pathSegments[1].toIntOrNull() else null
+
                 else -> null
             }
 
@@ -126,9 +128,10 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                 }
 
                 composable(
-                    route = Destination.RecipeDetails.route
+                    route = Destination.RecipeDetails.route,
+                    arguments = listOf(navArgument("recipeId") { type = NavType.IntType })
                 ) { backStackEntry ->
-                    val recipeId = backStackEntry.arguments?.getInt("param_recipeId") ?: 0
+                    val recipeId = backStackEntry.arguments?.getInt("recipeId") ?: 0
                     val recipe = RecipesRepositoryStub.getRecipeById(recipeId)
 
                     recipe?.let {
