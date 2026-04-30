@@ -14,8 +14,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import ru.vysokov.recipesappcompose.core.ui.FavoritesButton
 import ru.vysokov.recipesappcompose.core.ui.ScreenHeader
+import ru.vysokov.recipesappcompose.core.ui.ShareButton
+import ru.vysokov.recipesappcompose.core.utils.shareRecipe
 import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryStub
 import ru.vysokov.recipesappcompose.ui.details.components.ErrorPlaceholder
 import ru.vysokov.recipesappcompose.ui.details.components.IngredientsList
@@ -30,6 +33,7 @@ fun RecipeDetailsScreen(
     modifier: Modifier = Modifier,
     recipe: RecipeUiModel
 ) {
+    val context = LocalContext.current
     val recipeState = remember { RecipesRepositoryStub.getRecipeById(recipe.id)?.toUiModel() }
     var currentPortions by rememberSaveable { mutableStateOf(1) }
     var isFavoriteState by remember { mutableStateOf(false) }
@@ -63,6 +67,11 @@ fun RecipeDetailsScreen(
                     FavoritesButton(
                         isFavorite = isFavoriteState,
                         onClick = { isFavoriteState = !isFavoriteState },
+                    )
+                },
+                shareButton = {
+                    ShareButton(
+                        onClick = { shareRecipe(context, recipe.id, recipe.title) }
                     )
                 }
             )

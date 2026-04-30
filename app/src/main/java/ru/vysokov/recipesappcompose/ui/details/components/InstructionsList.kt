@@ -46,7 +46,8 @@ fun InstructionsList(
         ) {
             instructions.forEachIndexed { index, method ->
                 InstructionItem(
-                    methodRow = method
+                    index = index + 1,
+                    method = method
                 )
                 if (index < instructions.lastIndex) {
                     HorizontalDivider(
@@ -58,13 +59,13 @@ fun InstructionsList(
             }
         }
     }
-
 }
 
 @Composable
 fun InstructionItem(
     modifier: Modifier = Modifier,
-    methodRow: String
+    method: String,
+    index: Int
 ) {
     Row(
         modifier = modifier.padding(
@@ -73,7 +74,7 @@ fun InstructionItem(
         ),
     ) {
         Text(
-            text = methodRow,
+            text = "$index. $method",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

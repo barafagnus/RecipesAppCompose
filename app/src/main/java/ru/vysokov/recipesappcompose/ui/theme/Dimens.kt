@@ -38,7 +38,7 @@ object Dimens {
     val favoritesButtonIconWidth = 21.dp
     val favoritesButtonIconHeight = 18.dp
 
-    val favoritesIconSize = 40.dp
+    val iconSize = 40.dp
 
     val iconMediumSize = 24.dp
 

@@ -11,8 +11,7 @@ import ru.vysokov.recipesappcompose.R
 import ru.vysokov.recipesappcompose.ui.theme.Dimens
 
 @Composable
-fun FavoritesButton(
-    isFavorite: Boolean,
+fun ShareButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -22,9 +21,9 @@ fun FavoritesButton(
     ) {
         Icon(
             modifier = Modifier.size(Dimens.iconSize),
-            painter = if (isFavorite) painterResource(R.drawable.ic_heart) else painterResource(R.drawable.ic_heart_empty),
+            painter = painterResource(R.drawable.baseline_share_24),
             contentDescription = "",
-            tint = Color.Unspecified
+            tint = Color.White
         )
     }
 }

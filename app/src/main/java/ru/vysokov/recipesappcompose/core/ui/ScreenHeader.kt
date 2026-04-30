@@ -28,7 +28,8 @@ fun ScreenHeader(
     title: String,
     contentDescription: String,
     imageModel: Any?,
-    favoritesButton: @Composable (() -> Unit)? = null
+    favoritesButton: @Composable (() -> Unit)? = null,
+    shareButton: @Composable (() -> Unit)? = null
 ) {
     Box(
         modifier = Modifier
@@ -43,6 +44,15 @@ fun ScreenHeader(
             error = painterResource(R.drawable.bcg_categories),
             modifier = Modifier.fillMaxSize()
         )
+        if (shareButton != null) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(Dimens.paddingMedium)
+            ) {
+                shareButton()
+            }
+        }
 
         if (favoritesButton != null) {
             Box(
