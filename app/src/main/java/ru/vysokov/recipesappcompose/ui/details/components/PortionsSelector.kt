@@ -90,5 +90,5 @@ fun SliderDefaults.sliderColors(): SliderColors {
         inactiveTickColor = Color.Transparent
     )
 
-    return remember(customColors) { customColors }
+    return remember { customColors }
 }
