@@ -31,14 +31,15 @@ import ru.vysokov.recipesappcompose.ui.theme.Dimens
 @Composable
 fun RecipeDetailsScreen(
     modifier: Modifier = Modifier,
-    recipe: RecipeUiModel
+    recipe: RecipeUiModel,
+    isFavorite: Boolean,
+    onFavoriteToggle: () -> Unit,
 ) {
     val context = LocalContext.current
     val recipeState = remember { RecipesRepositoryStub.getRecipeById(recipe.id)?.toUiModel() }
     var currentPortions by rememberSaveable { mutableStateOf(1) }
-    var isFavoriteState by remember { mutableStateOf(false) }
 
-    val scaledIngredients = remember(currentPortions) {
+    val scaledIngredients = remember(recipe.ingredients, currentPortions) {
         recipeState?.ingredients?.map { ingredients ->
             val amount = ingredients.amount.toDoubleOrNull()
             if (amount != null) {
@@ -65,8 +66,8 @@ fun RecipeDetailsScreen(
                 imageModel = recipeState.imageUrl,
                 favoritesButton = {
                     FavoritesButton(
-                        isFavorite = isFavoriteState,
-                        onClick = { isFavoriteState = !isFavoriteState },
+                        isFavorite = isFavorite,
+                        onClick = onFavoriteToggle,
                     )
                 },
                 shareButton = {
