@@ -5,6 +5,7 @@ object Constants {
     const val KEY_RECIPE_OBJECT = "recipe"
     const val DEEP_LINK_SCHEME = "recipeapp"
     const val DEEP_LINK_BASE_URL = "https://recipes.androidsprint.ru"
+    const val FAVORITES_PREFS_KEY = "favorite_recipe_ids"
 
     fun createRecipeDeepLink(recipeId: Int) = "$DEEP_LINK_BASE_URL/recipe/$recipeId"
 }
