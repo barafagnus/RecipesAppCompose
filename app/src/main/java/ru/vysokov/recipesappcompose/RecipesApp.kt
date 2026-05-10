@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +40,10 @@ fun RecipesApp(deepLinkIntent: Intent?) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val context = LocalContext.current.applicationContext
+    val favoritesManager =
+        remember { FavoriteDataStoreManager(context = context) }
+    val favoritesCount by favoritesManager.getFavoriteCountFlow().collectAsState(initial = 0)
 
     LaunchedEffect(deepLinkIntent) {
         deepLinkIntent?.data?.let { uri ->
@@ -80,7 +85,8 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                                 launchSingleTop = true
                             }
                         }
-                    }
+                    },
+                    favoritesCount = favoritesCount
                 )
             }
         ) { paddingValues ->
@@ -142,16 +148,10 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                     val recipeId = backStackEntry.arguments?.getInt("recipeId") ?: 0
                     val recipe = RecipesRepositoryStub.getRecipeById(recipeId)
 
-                    val context = LocalContext.current.applicationContext
-                    val favoritesManager =
-                        remember { FavoriteDataStoreManager(context = context) }
-
                     val coroutineScope = rememberCoroutineScope()
-                    var isFavorite by remember { mutableStateOf(false) }
-
-                    LaunchedEffect(recipeId) {
-                        isFavorite = favoritesManager.isFavorite(recipeId)
-                    }
+                    val isFavorite by favoritesManager
+                        .isFavoriteFlow(recipeId)
+                        .collectAsState(initial = false)
 
                     recipe?.let {
                         RecipeDetailsScreen(
@@ -161,7 +161,6 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                                 coroutineScope.launch {
                                     if (isFavorite) favoritesManager.removeFavorite(recipeId)
                                     else favoritesManager.addFavorite(recipeId)
-                                    isFavorite = !isFavorite
                                 }
                             }
                         )
