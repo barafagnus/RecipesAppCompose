@@ -9,7 +9,7 @@ class FavoritesPrefsManager(
     context: Context
 ) {
     private val sharedPreferences: SharedPreferences =
-        context.getSharedPreferences(Constants.FAVORITES_PREFS_KEY, Context.MODE_PRIVATE)
+        context.getSharedPreferences(Constants.FAVORITES_PREFS_NAME, Context.MODE_PRIVATE)
 
     fun isFavorite(recipeId: Int): Boolean {
         val currentFavorites =

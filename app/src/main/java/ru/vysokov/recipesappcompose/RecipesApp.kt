@@ -9,6 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -20,8 +21,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import ru.vysokov.recipesappcompose.core.Constants
-import ru.vysokov.recipesappcompose.core.utils.FavoritesPrefsManager
+import ru.vysokov.recipesappcompose.core.utils.FavoriteDataStoreManager
 import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryStub
 import ru.vysokov.recipesappcompose.ui.categories.CategoriesScreen
 import ru.vysokov.recipesappcompose.ui.details.RecipeDetailsScreen
@@ -140,13 +142,15 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                     val recipeId = backStackEntry.arguments?.getInt("recipeId") ?: 0
                     val recipe = RecipesRepositoryStub.getRecipeById(recipeId)
 
-                    val context = LocalContext.current
-                    val favoritesPrefs = remember { FavoritesPrefsManager(context) }
+                    val context = LocalContext.current.applicationContext
+                    val favoritesManager =
+                        remember { FavoriteDataStoreManager(context = context) }
 
-                    var isFavorite by rememberSaveable(recipeId) {
-                        mutableStateOf(
-                            favoritesPrefs.isFavorite(recipeId)
-                        )
+                    val coroutineScope = rememberCoroutineScope()
+                    var isFavorite by remember { mutableStateOf(false) }
+
+                    LaunchedEffect(recipeId) {
+                        isFavorite = favoritesManager.isFavorite(recipeId)
                     }
 
                     recipe?.let {
@@ -154,9 +158,11 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                             recipe = it.toUiModel(),
                             isFavorite = isFavorite,
                             onFavoriteToggle = {
-                                if (isFavorite) favoritesPrefs.removeFromFavorites(recipeId)
-                                else favoritesPrefs.addToFavorites(recipeId)
-                                isFavorite = !isFavorite
+                                coroutineScope.launch {
+                                    if (isFavorite) favoritesManager.removeFavorite(recipeId)
+                                    else favoritesManager.addFavorite(recipeId)
+                                    isFavorite = !isFavorite
+                                }
                             }
                         )
                     }
