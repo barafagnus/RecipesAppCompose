@@ -1,5 +1,6 @@
 package ru.vysokov.recipesappcompose.ui.navigation
 
+import android.graphics.drawable.Drawable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -8,6 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -18,13 +21,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import coil3.compose.AsyncImagePainter.State.Empty.painter
 import ru.vysokov.recipesappcompose.R
 import ru.vysokov.recipesappcompose.ui.theme.Dimens
 
 @Composable
 fun BottomNavigation(
     onCategoriesClick: () -> Unit,
-    onFavoritesClick: () -> Unit
+    onFavoritesClick: () -> Unit,
+    favoritesCount: Int,
 ) {
     Row(
         modifier = Modifier
@@ -72,13 +77,24 @@ fun BottomNavigation(
             )
 
             Spacer(modifier = Modifier.width(Dimens.spacerLarge))
-
-            Icon(
-                painter = painterResource(R.drawable.ic_heart_empty),
-                tint = Color.White,
-                contentDescription = stringResource(R.string.favorites_button),
-                modifier = Modifier.size(Dimens.iconMediumSize),
-            )
+            BadgedBox(
+                badge = {
+                    Badge {
+                        Text(
+                            text = favoritesCount.toString(),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.surface
+                        )
+                    }
+                }
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_heart_empty),
+                    tint = Color.White,
+                    contentDescription = stringResource(R.string.favorites_button),
+                    modifier = Modifier.size(Dimens.iconMediumSize),
+                )
+            }
         }
     }
 

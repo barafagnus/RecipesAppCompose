@@ -1,8 +1,11 @@
 package ru.vysokov.recipesappcompose.core.utils
 
 import android.content.Context
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 
 class FavoriteDataStoreManager(
     private val context: Context
@@ -24,8 +27,26 @@ class FavoriteDataStoreManager(
     suspend fun removeFavorite(recipeId: Int) {
         context.dataStore.edit { preferences ->
             val currentFavorites = preferences[PreferencesKeys.FAVORITE_RECIPE_IDS] ?: emptySet()
-            preferences[PreferencesKeys.FAVORITE_RECIPE_IDS] = currentFavorites - recipeId.toString()
+            preferences[PreferencesKeys.FAVORITE_RECIPE_IDS] =
+                currentFavorites - recipeId.toString()
         }
+    }
+
+    fun getFavoritesIdsFlow(): Flow<Set<String>> {
+        return context.dataStore.data
+            .map { preferences ->
+                preferences[PreferencesKeys.FAVORITE_RECIPE_IDS] ?: emptySet()
+            }
+    }
+
+    fun isFavoriteFlow(recipeId: Int): Flow<Boolean> {
+        return getFavoritesIdsFlow().map {  favoritesIds ->
+            favoritesIds.contains(recipeId.toString())
+        }
+    }
+
+    fun getFavoriteCountFlow(): Flow<Int> {
+        return getFavoritesIdsFlow().map { it.size }
     }
 }
 
