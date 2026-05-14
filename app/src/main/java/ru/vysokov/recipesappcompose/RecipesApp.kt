@@ -1,6 +1,7 @@
 package ru.vysokov.recipesappcompose
 
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -8,11 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
@@ -22,6 +20,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.vysokov.recipesappcompose.core.Constants
 import ru.vysokov.recipesappcompose.core.utils.FavoriteDataStoreManager
@@ -137,8 +136,32 @@ fun RecipesApp(deepLinkIntent: Intent?) {
 
                 composable(
                     route = Destination.Favorites.route
-                ) {
-                    FavoritesScreen()
+                ) { navBackStackEntry ->
+                    val favoritesFlow = remember {
+                        favoritesManager.getFavoritesIdsFlow().map { ids ->
+                            ids.mapNotNull { id ->
+                                try {
+                                    RecipesRepositoryStub.getRecipeById(id.toIntOrNull())
+                                } catch (e: Exception) {
+                                    Log.e("!!!", "Load favorites recipe $e")
+                                    null
+                                }
+                            }
+                        }
+                    }
+
+                    val favoritesRecipes by favoritesFlow.collectAsState(initial = emptyList())
+
+                    FavoritesScreen(
+                        favoritesRecipes = favoritesRecipes,
+                        onRecipeClick = { recipeId, recipe ->
+                            navBackStackEntry?.savedStateHandle?.set(
+                                Constants.KEY_RECIPE_OBJECT,
+                                recipe
+                            )
+                            navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
+                        }
+                    )
                 }
 
                 composable(

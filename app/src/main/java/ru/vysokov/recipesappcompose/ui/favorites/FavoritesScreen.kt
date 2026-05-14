@@ -2,22 +2,28 @@ package ru.vysokov.recipesappcompose.ui.favorites
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import ru.vysokov.recipesappcompose.R
 import ru.vysokov.recipesappcompose.core.ui.ScreenHeader
+import ru.vysokov.recipesappcompose.data.model.RecipeDto
+import ru.vysokov.recipesappcompose.ui.recipes.RecipeItem
+import ru.vysokov.recipesappcompose.ui.recipes.RecipeUiModel
+import ru.vysokov.recipesappcompose.ui.recipes.toUiModel
 import ru.vysokov.recipesappcompose.ui.theme.Dimens
 
 @Composable
-fun FavoritesScreen() {
+fun FavoritesScreen(
+    favoritesRecipes: List<RecipeDto>,
+    onRecipeClick: (Int, RecipeUiModel) -> Unit,
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(Dimens.paddingMedium)
     ) {
         ScreenHeader(
             title = stringResource(R.string.favorites),
@@ -26,9 +32,17 @@ fun FavoritesScreen() {
         )
 
         LazyColumn(
-            modifier = Modifier.padding(horizontal = Dimens.paddingMedium)
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(Dimens.paddingMedium),
+            contentPadding = PaddingValues(Dimens.paddingMedium)
         ) {
-            item { Text(text = "Избранные рецепты") }
+            items(items = favoritesRecipes, key = { it.id }) { recipe ->
+                val recipe = recipe.toUiModel()
+                RecipeItem(
+                    model = recipe,
+                    onClick = { onRecipeClick(recipe.id, recipe) }
+                )
+            }
         }
     }
 }
