@@ -1,4 +1,4 @@
-package ru.vysokov.recipesappcompose.ui.details.components
+package ru.vysokov.recipesappcompose.features.details.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import ru.vysokov.recipesappcompose.ui.recipes.IngredientsUiModel
+import ru.vysokov.recipesappcompose.features.recipes.presentation.model.IngredientsUiModel
 import ru.vysokov.recipesappcompose.ui.theme.Dimens
 
 @Composable

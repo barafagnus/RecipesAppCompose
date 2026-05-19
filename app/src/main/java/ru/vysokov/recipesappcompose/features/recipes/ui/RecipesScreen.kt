@@ -1,4 +1,4 @@
-package ru.vysokov.recipesappcompose.ui.recipes
+package ru.vysokov.recipesappcompose.features.recipes.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,7 +22,10 @@ import androidx.compose.ui.res.stringResource
 import ru.vysokov.recipesappcompose.R
 import ru.vysokov.recipesappcompose.core.ui.ScreenHeader
 import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryStub
-import ru.vysokov.recipesappcompose.ui.categories.toUiModel
+import ru.vysokov.recipesappcompose.features.categories.presentation.model.toUiModel
+import ru.vysokov.recipesappcompose.features.recipes.presentation.model.RecipeUiModel
+import ru.vysokov.recipesappcompose.features.recipes.presentation.model.toUiModel
+import ru.vysokov.recipesappcompose.features.recipes.ui.component.RecipeItem
 import ru.vysokov.recipesappcompose.ui.theme.Dimens
 
 @Composable

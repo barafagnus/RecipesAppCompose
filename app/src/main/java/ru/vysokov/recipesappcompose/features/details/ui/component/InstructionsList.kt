@@ -1,4 +1,4 @@
-package ru.vysokov.recipesappcompose.ui.details.components
+package ru.vysokov.recipesappcompose.features.details.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
