@@ -7,4 +7,5 @@
     <string name="recipes">Recipes</string>
     <string name="ingredients">Ingredients</string>
     <string name="method_of_preparation">Method of preparation</string>
+    <string name="empty_favorites_text">You haven\'t added any recipes to your favorites yet</string>
 </resources>
