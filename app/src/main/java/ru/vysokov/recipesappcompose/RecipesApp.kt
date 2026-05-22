@@ -25,13 +25,13 @@ import kotlinx.coroutines.launch
 import ru.vysokov.recipesappcompose.core.Constants
 import ru.vysokov.recipesappcompose.core.utils.FavoriteDataStoreManager
 import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryStub
-import ru.vysokov.recipesappcompose.ui.categories.CategoriesScreen
-import ru.vysokov.recipesappcompose.ui.details.RecipeDetailsScreen
-import ru.vysokov.recipesappcompose.ui.favorites.FavoritesScreen
+import ru.vysokov.recipesappcompose.features.categories.ui.CategoriesScreen
+import ru.vysokov.recipesappcompose.features.details.ui.RecipeDetailsScreen
+import ru.vysokov.recipesappcompose.features.favorites.ui.FavoritesScreen
 import ru.vysokov.recipesappcompose.ui.navigation.BottomNavigation
 import ru.vysokov.recipesappcompose.ui.navigation.Destination
-import ru.vysokov.recipesappcompose.ui.recipes.RecipesScreen
-import ru.vysokov.recipesappcompose.ui.recipes.toUiModel
+import ru.vysokov.recipesappcompose.features.recipes.ui.RecipesScreen
+import ru.vysokov.recipesappcompose.features.recipes.presentation.model.toUiModel
 import ru.vysokov.recipesappcompose.ui.theme.RecipesAppComposeTheme
 
 @Composable

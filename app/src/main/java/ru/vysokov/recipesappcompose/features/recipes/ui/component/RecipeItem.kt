@@ -1,4 +1,4 @@
-package ru.vysokov.recipesappcompose.ui.recipes
+package ru.vysokov.recipesappcompose.features.recipes.ui.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import coil3.compose.AsyncImage
 import ru.vysokov.recipesappcompose.R
 import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryStub
+import ru.vysokov.recipesappcompose.features.recipes.presentation.model.RecipeUiModel
+import ru.vysokov.recipesappcompose.features.recipes.presentation.model.toUiModel
 import ru.vysokov.recipesappcompose.ui.theme.Dimens
 import ru.vysokov.recipesappcompose.ui.theme.RecipesAppComposeTheme
 

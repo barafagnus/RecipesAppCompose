@@ -1,4 +1,4 @@
-package ru.vysokov.recipesappcompose.ui.details
+package ru.vysokov.recipesappcompose.features.details.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,12 +20,12 @@ import ru.vysokov.recipesappcompose.core.ui.ScreenHeader
 import ru.vysokov.recipesappcompose.core.ui.ShareButton
 import ru.vysokov.recipesappcompose.core.utils.shareRecipe
 import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryStub
-import ru.vysokov.recipesappcompose.ui.details.components.ErrorPlaceholder
-import ru.vysokov.recipesappcompose.ui.details.components.IngredientsList
-import ru.vysokov.recipesappcompose.ui.details.components.InstructionsList
-import ru.vysokov.recipesappcompose.ui.details.components.PortionsSelector
-import ru.vysokov.recipesappcompose.ui.recipes.RecipeUiModel
-import ru.vysokov.recipesappcompose.ui.recipes.toUiModel
+import ru.vysokov.recipesappcompose.features.details.ui.component.ErrorPlaceholder
+import ru.vysokov.recipesappcompose.features.details.ui.component.IngredientsList
+import ru.vysokov.recipesappcompose.features.details.ui.component.InstructionsList
+import ru.vysokov.recipesappcompose.features.details.ui.component.PortionsSelector
+import ru.vysokov.recipesappcompose.features.recipes.presentation.model.RecipeUiModel
+import ru.vysokov.recipesappcompose.features.recipes.presentation.model.toUiModel
 import ru.vysokov.recipesappcompose.ui.theme.Dimens
 
 @Composable

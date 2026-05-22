@@ -1,4 +1,4 @@
-package ru.vysokov.recipesappcompose.ui.categories
+package ru.vysokov.recipesappcompose.features.categories.ui.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import coil3.compose.AsyncImage
 import ru.vysokov.recipesappcompose.R
 import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryStub
+import ru.vysokov.recipesappcompose.features.categories.presentation.model.CategoryUiModel
+import ru.vysokov.recipesappcompose.features.categories.presentation.model.toUiModel
 import ru.vysokov.recipesappcompose.ui.theme.Dimens
 import ru.vysokov.recipesappcompose.ui.theme.RecipesAppComposeTheme
 

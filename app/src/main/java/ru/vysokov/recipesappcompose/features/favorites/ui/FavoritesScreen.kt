@@ -1,4 +1,4 @@
-package ru.vysokov.recipesappcompose.ui.favorites
+package ru.vysokov.recipesappcompose.features.favorites.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,9 +18,9 @@ import androidx.compose.ui.text.style.TextAlign
 import ru.vysokov.recipesappcompose.R
 import ru.vysokov.recipesappcompose.core.ui.ScreenHeader
 import ru.vysokov.recipesappcompose.data.model.RecipeDto
-import ru.vysokov.recipesappcompose.ui.recipes.RecipeItem
-import ru.vysokov.recipesappcompose.ui.recipes.RecipeUiModel
-import ru.vysokov.recipesappcompose.ui.recipes.toUiModel
+import ru.vysokov.recipesappcompose.features.recipes.ui.component.RecipeItem
+import ru.vysokov.recipesappcompose.features.recipes.presentation.model.RecipeUiModel
+import ru.vysokov.recipesappcompose.features.recipes.presentation.model.toUiModel
 import ru.vysokov.recipesappcompose.ui.theme.Dimens
 
 @Composable

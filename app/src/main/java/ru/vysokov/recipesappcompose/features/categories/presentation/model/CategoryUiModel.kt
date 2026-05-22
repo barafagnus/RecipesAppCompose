@@ -1,4 +1,4 @@
-package ru.vysokov.recipesappcompose.ui.categories
+package ru.vysokov.recipesappcompose.features.categories.presentation.model
 
 import androidx.compose.runtime.Immutable
 import ru.vysokov.recipesappcompose.core.Constants
