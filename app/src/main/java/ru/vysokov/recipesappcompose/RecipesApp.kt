@@ -98,10 +98,12 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                     route = Destination.Categories.route
                 ) {
                     CategoriesScreen(
-                        onCategoryClick = { categoryId ->
+                        onCategoryClick = { categoryId, categoryTitle, categoryImageUrl ->
                             navController.navigate(
                                 Destination.Recipes.createRoute(
-                                    categoryId
+                                    categoryId,
+                                    categoryTitle,
+                                    categoryImageUrl
                                 )
                             )
                         },
@@ -112,16 +114,21 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                     route = Destination.Recipes.route,
                     arguments = listOf(
                         navArgument("categoryId") { type = NavType.IntType },
+                        navArgument("categoryTitle") { type = NavType.StringType },
+                        navArgument("categoryImageUrl") { type = NavType.StringType },
                     )
                 ) { backStackEntry ->
                     val categoryId = backStackEntry.arguments?.getInt("categoryId")
                         ?: error("Category ID is required.")
-                    val title = RecipesRepositoryStub.getCategoryById(categoryId)?.title
+                    val categoryTitle = backStackEntry.arguments?.getString("categoryTitle")
+                        ?: error("Category ID is required.")
+                    val categoryImageUrl = backStackEntry.arguments?.getString("categoryImageUrl")
                         ?: error("Category ID is required.")
 
                     RecipesScreen(
                         categoryId = categoryId,
-                        categoryTitle = title,
+                        categoryTitle = categoryTitle,
+                        categoryImageUrl = categoryImageUrl,
                         onRecipeClick = { recipeId, recipe ->
                             backStackEntry?.savedStateHandle?.set(
                                 Constants.KEY_RECIPE_OBJECT,

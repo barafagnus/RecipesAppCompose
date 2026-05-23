@@ -33,12 +33,10 @@ fun RecipesScreen(
     categoryId: Int?,
     categoryTitle: String,
     onRecipeClick: (Int, RecipeUiModel) -> Unit,
+    categoryImageUrl: String,
 ) {
     var recipes by remember { mutableStateOf<List<RecipeUiModel>>(emptyList()) }
     var isLoading by remember { mutableStateOf(false) }
-    val categoryImageUrl = remember(categoryId) {
-        RecipesRepositoryStub.getCategoryById(categoryId)?.toUiModel()?.imageUrl
-    }
 
     LaunchedEffect(categoryId) {
         isLoading = true
@@ -59,7 +57,7 @@ fun RecipesScreen(
         ScreenHeader(
             title = categoryTitle,
             contentDescription = stringResource(R.string.recipes),
-            imageModel = categoryImageUrl ?: R.drawable.bcg_favorites
+            imageModel = categoryImageUrl
             )
 
         if (isLoading) {
