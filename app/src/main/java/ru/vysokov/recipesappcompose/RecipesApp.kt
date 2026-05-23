@@ -1,6 +1,7 @@
 package ru.vysokov.recipesappcompose
 
 import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -113,24 +114,14 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                 composable(
                     route = Destination.Recipes.route,
                     arguments = listOf(
-                        navArgument("categoryId") { type = NavType.IntType },
-                        navArgument("categoryTitle") { type = NavType.StringType },
-                        navArgument("categoryImageUrl") { type = NavType.StringType },
+                        navArgument(Constants.KEY_CATEGORY_ID) { type = NavType.IntType },
+                        navArgument(Constants.KEY_CATEGORY_TITLE) { type = NavType.StringType },
+                        navArgument(Constants.KEY_CATEGORY_IMAGE_URL) { type = NavType.StringType },
                     )
                 ) { backStackEntry ->
-                    val categoryId = backStackEntry.arguments?.getInt("categoryId")
-                        ?: error("Category ID is required.")
-                    val categoryTitle = backStackEntry.arguments?.getString("categoryTitle")
-                        ?: error("Category ID is required.")
-                    val categoryImageUrl = backStackEntry.arguments?.getString("categoryImageUrl")
-                        ?: error("Category ID is required.")
-
                     RecipesScreen(
-                        categoryId = categoryId,
-                        categoryTitle = categoryTitle,
-                        categoryImageUrl = categoryImageUrl,
                         onRecipeClick = { recipeId, recipe ->
-                            backStackEntry?.savedStateHandle?.set(
+                            backStackEntry.savedStateHandle.set(
                                 Constants.KEY_RECIPE_OBJECT,
                                 recipe
                             )

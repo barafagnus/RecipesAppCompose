@@ -8,6 +8,9 @@ object Constants {
     const val FAVORITES_PREFS_KEY = "favorite_recipe_ids"
     const val FAVORITES_PREFS_NAME = "favorites_prefs"
     const val DATASTORE_PREFS = "recipe_app_prefs"
+    const val KEY_CATEGORY_ID = "category_id"
+    const val KEY_CATEGORY_IMAGE_URL = "category_image_url"
+    const val KEY_CATEGORY_TITLE = "category_title"
 
     fun createRecipeDeepLink(recipeId: Int) = "$DEEP_LINK_BASE_URL/recipe/$recipeId"
 }
