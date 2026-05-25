@@ -1,7 +1,6 @@
 package ru.vysokov.recipesappcompose
 
 import android.content.Intent
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -19,10 +18,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.map
 import ru.vysokov.recipesappcompose.core.Constants
 import ru.vysokov.recipesappcompose.core.utils.FavoriteDataStoreManager
-import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryStub
 import ru.vysokov.recipesappcompose.features.categories.ui.CategoriesScreen
 import ru.vysokov.recipesappcompose.features.details.ui.RecipeDetailsScreen
 import ru.vysokov.recipesappcompose.features.favorites.ui.FavoritesScreen
@@ -114,7 +111,7 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                         navArgument(Constants.KEY_CATEGORY_TITLE) { type = NavType.StringType },
                         navArgument(Constants.KEY_CATEGORY_IMAGE_URL) { type = NavType.StringType },
                     )
-                ) { backStackEntry ->
+                ) {
                     RecipesScreen(
                         onRecipeClick = { recipeId ->
                             navController.navigate(
@@ -126,7 +123,7 @@ fun RecipesApp(deepLinkIntent: Intent?) {
 
                 composable(
                     route = Destination.Favorites.route
-                ) { navBackStackEntry ->
+                ) {
                     FavoritesScreen(
                         onRecipeClick = { recipeId ->
                             navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
@@ -137,7 +134,7 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                 composable(
                     route = Destination.RecipeDetails.route,
                     arguments = listOf(navArgument(Constants.KEY_RECIPE_ID) { type = NavType.IntType })
-                ) { backStackEntry ->
+                ) {
                     RecipeDetailsScreen()
                 }
             }
