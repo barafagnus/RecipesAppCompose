@@ -16,7 +16,7 @@ sealed class Destination(val route: String) {
         }
     }
 
-    object RecipeDetails : Destination("recipe/{recipeId}") {
+    object RecipeDetails : Destination("recipe/{${Constants.KEY_RECIPE_ID}}") {
         fun createRoute(recipeId: Int) = "recipe/$recipeId"
     }
 

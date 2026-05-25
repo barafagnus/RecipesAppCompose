@@ -3,6 +3,7 @@ package ru.vysokov.recipesappcompose.core
 object Constants {
     const val ASSETS_URI_PREFIX = "file:///android_asset/"
     const val KEY_RECIPE_OBJECT = "recipe"
+    const val KEY_RECIPE_ID = "recipe_id"
     const val DEEP_LINK_SCHEME = "recipeapp"
     const val DEEP_LINK_BASE_URL = "https://recipes.androidsprint.ru"
     const val FAVORITES_PREFS_KEY = "favorite_recipe_ids"

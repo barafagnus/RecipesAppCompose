@@ -1,7 +1,6 @@
 package ru.vysokov.recipesappcompose
 
 import android.content.Intent
-import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,7 +10,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
@@ -22,17 +20,15 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import ru.vysokov.recipesappcompose.core.Constants
 import ru.vysokov.recipesappcompose.core.utils.FavoriteDataStoreManager
 import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryStub
 import ru.vysokov.recipesappcompose.features.categories.ui.CategoriesScreen
 import ru.vysokov.recipesappcompose.features.details.ui.RecipeDetailsScreen
 import ru.vysokov.recipesappcompose.features.favorites.ui.FavoritesScreen
+import ru.vysokov.recipesappcompose.features.recipes.ui.RecipesScreen
 import ru.vysokov.recipesappcompose.ui.navigation.BottomNavigation
 import ru.vysokov.recipesappcompose.ui.navigation.Destination
-import ru.vysokov.recipesappcompose.features.recipes.ui.RecipesScreen
-import ru.vysokov.recipesappcompose.features.recipes.presentation.model.toUiModel
 import ru.vysokov.recipesappcompose.ui.theme.RecipesAppComposeTheme
 
 @Composable
@@ -120,11 +116,7 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                     )
                 ) { backStackEntry ->
                     RecipesScreen(
-                        onRecipeClick = { recipeId, recipe ->
-                            backStackEntry.savedStateHandle.set(
-                                Constants.KEY_RECIPE_OBJECT,
-                                recipe
-                            )
+                        onRecipeClick = { recipeId ->
                             navController.navigate(
                                 Destination.RecipeDetails.createRoute(recipeId)
                             )
@@ -135,28 +127,8 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                 composable(
                     route = Destination.Favorites.route
                 ) { navBackStackEntry ->
-                    val favoritesFlow = remember {
-                        favoritesManager.getFavoritesIdsFlow().map { ids ->
-                            ids.mapNotNull { id ->
-                                try {
-                                    RecipesRepositoryStub.getRecipeById(id.toIntOrNull())
-                                } catch (e: Exception) {
-                                    Log.e("!!!", "Load favorites recipe $e")
-                                    null
-                                }
-                            }
-                        }
-                    }
-
-                    val favoritesRecipes by favoritesFlow.collectAsState(initial = emptyList())
-
                     FavoritesScreen(
-                        favoritesRecipes = favoritesRecipes,
-                        onRecipeClick = { recipeId, recipe ->
-                            navBackStackEntry?.savedStateHandle?.set(
-                                Constants.KEY_RECIPE_OBJECT,
-                                recipe
-                            )
+                        onRecipeClick = { recipeId ->
                             navController.navigate(Destination.RecipeDetails.createRoute(recipeId))
                         }
                     )
@@ -164,28 +136,9 @@ fun RecipesApp(deepLinkIntent: Intent?) {
 
                 composable(
                     route = Destination.RecipeDetails.route,
-                    arguments = listOf(navArgument("recipeId") { type = NavType.IntType })
+                    arguments = listOf(navArgument(Constants.KEY_RECIPE_ID) { type = NavType.IntType })
                 ) { backStackEntry ->
-                    val recipeId = backStackEntry.arguments?.getInt("recipeId") ?: 0
-                    val recipe = RecipesRepositoryStub.getRecipeById(recipeId)
-
-                    val coroutineScope = rememberCoroutineScope()
-                    val isFavorite by favoritesManager
-                        .isFavoriteFlow(recipeId)
-                        .collectAsState(initial = false)
-
-                    recipe?.let {
-                        RecipeDetailsScreen(
-                            recipe = it.toUiModel(),
-                            isFavorite = isFavorite,
-                            onFavoriteToggle = {
-                                coroutineScope.launch {
-                                    if (isFavorite) favoritesManager.removeFavorite(recipeId)
-                                    else favoritesManager.addFavorite(recipeId)
-                                }
-                            }
-                        )
-                    }
+                    RecipeDetailsScreen()
                 }
             }
         }
