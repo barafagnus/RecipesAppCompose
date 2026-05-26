@@ -1,73 +1,73 @@
 package ru.vysokov.recipesappcompose.features.details.ui
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.vysokov.recipesappcompose.core.ui.FavoritesButton
 import ru.vysokov.recipesappcompose.core.ui.ScreenHeader
 import ru.vysokov.recipesappcompose.core.ui.ShareButton
 import ru.vysokov.recipesappcompose.core.utils.shareRecipe
-import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryStub
-import ru.vysokov.recipesappcompose.features.details.ui.component.ErrorPlaceholder
+import ru.vysokov.recipesappcompose.features.details.presentation.RecipeDetailsViewModel
+import ru.vysokov.recipesappcompose.features.details.presentation.model.RecipeDetailsUiState
 import ru.vysokov.recipesappcompose.features.details.ui.component.IngredientsList
 import ru.vysokov.recipesappcompose.features.details.ui.component.InstructionsList
 import ru.vysokov.recipesappcompose.features.details.ui.component.PortionsSelector
-import ru.vysokov.recipesappcompose.features.recipes.presentation.model.RecipeUiModel
-import ru.vysokov.recipesappcompose.features.recipes.presentation.model.toUiModel
 import ru.vysokov.recipesappcompose.ui.theme.Dimens
 
 @Composable
 fun RecipeDetailsScreen(
     modifier: Modifier = Modifier,
-    recipe: RecipeUiModel,
-    isFavorite: Boolean,
-    onFavoriteToggle: () -> Unit,
 ) {
+    val viewModel: RecipeDetailsViewModel = viewModel()
+    val uiState: RecipeDetailsUiState by viewModel.uiState.collectAsState()
+    val recipe = uiState.recipe
     val context = LocalContext.current
-    val recipeState = remember { RecipesRepositoryStub.getRecipeById(recipe.id)?.toUiModel() }
-    var currentPortions by rememberSaveable { mutableStateOf(1) }
 
-    val scaledIngredients = remember(recipe.ingredients, currentPortions) {
-        recipeState?.ingredients?.map { ingredients ->
-            val amount = ingredients.amount.toDoubleOrNull()
-            if (amount != null) {
-                ingredients.copy(
-                    amount = (amount * currentPortions).toString()
-                )
-            } else ingredients
+    if (uiState.isLoading) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
         }
-    }
-
-    if (recipeState == null) {
-        ErrorPlaceholder()
-    } else
-
+    } else if (uiState.errorMessage != null) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "Ошибка загрузки: ${uiState.errorMessage}")
+        }
+    } else if (recipe != null) {
         Column(
             modifier = modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-
             ScreenHeader(
-                title = recipeState.title,
-                contentDescription = recipeState.title,
-                imageModel = recipeState.imageUrl,
+                title = recipe.title,
+                contentDescription = recipe.title,
+                imageModel = recipe.imageUrl,
                 favoritesButton = {
                     FavoritesButton(
-                        isFavorite = isFavorite,
-                        onClick = onFavoriteToggle,
+                        isFavorite = uiState.isFavorite,
+                        onClick = { viewModel.toggleFavorite() },
                     )
                 },
                 shareButton = {
@@ -81,24 +81,25 @@ fun RecipeDetailsScreen(
 
             PortionsSelector(
                 modifier = Modifier.padding(horizontal = Dimens.paddingMedium),
-                currentPortions = currentPortions,
-                onPortionsChange = { currentPortions = it }
+                currentPortions = uiState.currentPortions,
+                onPortionsChange = { viewModel.updatePortions(it) }
             )
 
             Spacer(modifier = Modifier.height(Dimens.paddingMedium))
 
             IngredientsList(
                 modifier = Modifier.padding(horizontal = Dimens.paddingMedium),
-                scaledIngredients = scaledIngredients ?: emptyList()
+                scaledIngredients = uiState.scaledIngredients ?: emptyList()
             )
 
             Spacer(modifier = Modifier.height(Dimens.paddingMedium))
 
             InstructionsList(
                 modifier = Modifier.padding(horizontal = Dimens.paddingMedium),
-                instructions = recipeState.method
+                instructions = recipe.method
             )
 
             Spacer(modifier = Modifier.height(Dimens.paddingMedium))
         }
+    }
 }

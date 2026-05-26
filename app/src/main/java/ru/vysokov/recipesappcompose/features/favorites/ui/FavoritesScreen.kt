@@ -5,29 +5,35 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.vysokov.recipesappcompose.R
 import ru.vysokov.recipesappcompose.core.ui.ScreenHeader
-import ru.vysokov.recipesappcompose.data.model.RecipeDto
+import ru.vysokov.recipesappcompose.features.favorites.presentation.FavoritesViewModel
+import ru.vysokov.recipesappcompose.features.favorites.presentation.model.FavoritesUiState
 import ru.vysokov.recipesappcompose.features.recipes.ui.component.RecipeItem
-import ru.vysokov.recipesappcompose.features.recipes.presentation.model.RecipeUiModel
-import ru.vysokov.recipesappcompose.features.recipes.presentation.model.toUiModel
 import ru.vysokov.recipesappcompose.ui.theme.Dimens
 
 @Composable
 fun FavoritesScreen(
-    favoritesRecipes: List<RecipeDto>,
-    onRecipeClick: (Int, RecipeUiModel) -> Unit,
+    onRecipeClick: (Int) -> Unit,
 ) {
+    val viewModel: FavoritesViewModel = viewModel()
+    val uiState: FavoritesUiState by viewModel.uiState.collectAsState()
+
     Column(
         modifier = Modifier.fillMaxSize(),
     ) {
@@ -36,8 +42,23 @@ fun FavoritesScreen(
             contentDescription = stringResource(R.string.favorites),
             imageModel = R.drawable.bcg_favorites
         )
-
-        if (favoritesRecipes.isEmpty()) {
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+            }
+        } else if (uiState.errorMessage != null) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "Ошибка загрузки: ${uiState.errorMessage}")
+            }
+        } else if (uiState.favoriteRecipes.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -57,11 +78,10 @@ fun FavoritesScreen(
                 verticalArrangement = Arrangement.spacedBy(Dimens.paddingMedium),
                 contentPadding = PaddingValues(Dimens.paddingMedium)
             ) {
-                items(items = favoritesRecipes, key = { it.id }) { recipe ->
-                    val recipeUiModel = recipe.toUiModel()
+                items(items = uiState.favoriteRecipes, key = { it.id }) { recipe ->
                     RecipeItem(
-                        model = recipeUiModel,
-                        onClick = { onRecipeClick(recipeUiModel.id, recipeUiModel) }
+                        model = recipe,
+                        onClick = { onRecipeClick(recipe.id) }
                     )
                 }
             }
