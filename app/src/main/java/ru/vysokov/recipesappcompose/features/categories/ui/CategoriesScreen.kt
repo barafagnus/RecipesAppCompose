@@ -14,17 +14,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.vysokov.recipesappcompose.R
 import ru.vysokov.recipesappcompose.core.ui.ScreenHeader
-import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryStub
 import ru.vysokov.recipesappcompose.features.categories.presentation.CategoriesViewModel
-import ru.vysokov.recipesappcompose.features.categories.presentation.model.toUiModel
 import ru.vysokov.recipesappcompose.features.categories.ui.component.CategoryItem
 import ru.vysokov.recipesappcompose.ui.theme.Dimens
 
