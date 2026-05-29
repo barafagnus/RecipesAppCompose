@@ -34,7 +34,9 @@ class MainActivity : ComponentActivity() {
             val conn = url.openConnection() as HttpURLConnection
             try {
                 conn.connect()
-                val body = conn.inputStream.bufferedReader().readText()
+                val body = conn.inputStream.bufferedReader().use {
+                    it.readText()
+                }
                 val categories = Json.decodeFromString<List<CategoryDto>>(body)
 
                 Log.i("!!!", "responseCode: ${conn.responseCode}")
@@ -42,6 +44,9 @@ class MainActivity : ComponentActivity() {
 
                 Log.i("!!!", "categories size: ${categories.size}")
                 Log.i("!!!", "categories: ${categories.map { it.title }}")
+
+            } catch (e: Exception) {
+                Log.e("!!!", "load api data: ${e.message}")
             } finally {
                 conn.disconnect()
             }
