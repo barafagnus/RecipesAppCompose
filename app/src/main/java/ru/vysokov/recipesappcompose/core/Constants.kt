@@ -12,6 +12,7 @@ object Constants {
     const val KEY_CATEGORY_ID = "category_id"
     const val KEY_CATEGORY_IMAGE_URL = "category_image_url"
     const val KEY_CATEGORY_TITLE = "category_title"
+    const val RECIPES_BASE_URL = "https://recipes.androidsprint.ru/api"
 
     fun createRecipeDeepLink(recipeId: Int) = "$DEEP_LINK_BASE_URL/recipe/$recipeId"
 }
