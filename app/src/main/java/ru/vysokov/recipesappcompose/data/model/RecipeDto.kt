@@ -1,5 +1,8 @@
 package ru.vysokov.recipesappcompose.data.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class RecipeDto(
     val id: Int,
     val title: String,
