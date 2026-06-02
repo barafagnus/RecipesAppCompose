@@ -16,10 +16,15 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okio.IOException
+import retrofit2.Retrofit
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import ru.vysokov.recipesappcompose.core.Constants
+import ru.vysokov.recipesappcompose.core.network.NetworkConfig
+import ru.vysokov.recipesappcompose.core.network.api.RecipesApiService
 import ru.vysokov.recipesappcompose.data.model.CategoryDto
 import ru.vysokov.recipesappcompose.data.model.RecipeDto
 
@@ -43,33 +48,26 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun loadData() {
+        val recipesApi = RecipesApi.apiService
+
         lifecycleScope.launch {
             try {
-                Log.i("!!!", "Выполняю запрос на потоке: ${Thread.currentThread().name}")
-
-                val categories = RecipesRepo.loadCategories()
+                val categories = recipesApi.getCategories()
                 Log.i("!!!", "\nКатегорий: ${categories.size}")
 
-                val recipes = categories.map { category ->
+                val recipes = categories.map { categoryDto ->
                     async(Dispatchers.IO) {
                         try {
-                            val recipesList = RecipesRepo.loadRecipes(category.id)
-                            Log.i(
-                                "!!!",
-                                "\nПоток ${Thread.currentThread().name} | Категория ${category.title} | Рецептов: ${recipesList.size}"
-                            )
-                            recipesList
+                            recipesApi.getRecipesByCategory(categoryDto.id)
                         } catch (e: Exception) {
-                            Log.e("!!!", "load api data Recipe: ${e.message}")
+                            Log.e("!!!", "Error load Recipe: ${e.message}")
                             emptyList<RecipeDto>()
                         }
                     }
                 }.awaitAll().flatten()
-
                 Log.i("!!!", "\nРецептов всего загружено: ${recipes.size}")
-
             } catch (e: Exception) {
-                Log.e("!!!", "load api data Category: ${e.message}")
+                Log.e("!!!", "Error load category: ${e.message}")
             }
         }
     }
@@ -84,24 +82,17 @@ class MainActivity : ComponentActivity() {
 
 }
 
-object RecipesRepo {
-    private val client = OkHttpClient()
-
-    private suspend fun getRequest(urlString: String): String = withContext(Dispatchers.IO) {
-        val request = Request.Builder().url(urlString).build()
-        client.newCall(request).execute().use { response ->
-            if (!response.isSuccessful) throw IOException("Response code: ${response.code}")
-            response.body?.string() ?: throw IOException("Empty response body")
-        }
+object RecipesApi {
+    private val contentType = "application/json".toMediaType()
+    private val json = Json {
+        ignoreUnknownKeys = true
+        coerceInputValues = true
     }
-
-    suspend fun loadCategories(): List<CategoryDto> {
-        val response = getRequest("${Constants.RECIPES_BASE_URL}/category")
-        return Json.decodeFromString(response)
-    }
-
-    suspend fun loadRecipes(categoryId: Int): List<RecipeDto> {
-        val response = getRequest("${Constants.RECIPES_BASE_URL}/category/$categoryId/recipes")
-        return Json.decodeFromString(response)
+    val apiService: RecipesApiService by lazy {
+        Retrofit.Builder()
+            .baseUrl(NetworkConfig.BASE_URL)
+            .addConverterFactory(json.asConverterFactory(contentType))
+            .build()
+            .create(RecipesApiService::class.java)
     }
 }
