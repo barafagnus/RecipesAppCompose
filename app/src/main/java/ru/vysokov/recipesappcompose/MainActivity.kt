@@ -16,20 +16,16 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import ru.vysokov.recipesappcompose.RecipesRepoCoroutines.loadRecipes
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okio.IOException
 import ru.vysokov.recipesappcompose.core.Constants
 import ru.vysokov.recipesappcompose.data.model.CategoryDto
 import ru.vysokov.recipesappcompose.data.model.RecipeDto
-import java.net.HttpURLConnection
-import java.net.URL
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import kotlin.collections.flatten
 
 
 class MainActivity : ComponentActivity() {
     private var deepLinkIntent by mutableStateOf<Intent?>(null)
-    private val threadPool: ExecutorService = Executors.newFixedThreadPool(10)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +34,7 @@ class MainActivity : ComponentActivity() {
             deepLinkIntent = intent
         }
 
-        loadDataUsingThreadPool()
+        loadData()
 
         enableEdgeToEdge()
         setContent {
@@ -46,46 +42,21 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    // По классике Thread Pools
-    private fun loadDataUsingThreadPool() {
-        threadPool.execute {
-            try {
-                Log.i("!!!", "Выполняю запрос на потоке: ${Thread.currentThread().name}")
-                val categories = RecipesRepoTP.loadCategories()
-
-                categories.forEach { category ->
-                    threadPool.execute {
-                        try {
-                            val recipesList = RecipesRepoTP.loadRecipes(category.id)
-                            Log.i(
-                                "!!!", "\nПоток ${Thread.currentThread().name} | Категория ${category.title} | Рецептов: ${recipesList.size}"
-                            )
-                        } catch (e: Exception) {
-                            Log.e("!!!", "load api data Recipe: ${e.message}")
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                Log.e("!!!", "load api data Category: ${e.message}")
-            }
-        }
-    }
-
-    // Через корутины
-    private fun loadDataUsingCoroutines() {
+    private fun loadData() {
         lifecycleScope.launch {
             try {
                 Log.i("!!!", "Выполняю запрос на потоке: ${Thread.currentThread().name}")
 
-                val categories = RecipesRepoCoroutines.loadCategories()
+                val categories = RecipesRepo.loadCategories()
                 Log.i("!!!", "\nКатегорий: ${categories.size}")
 
                 val recipes = categories.map { category ->
                     async(Dispatchers.IO) {
                         try {
-                            val recipesList = loadRecipes(category.id)
+                            val recipesList = RecipesRepo.loadRecipes(category.id)
                             Log.i(
-                                "!!!", "\nПоток ${Thread.currentThread().name} | Категория ${category.title} | Рецептов: ${recipesList.size}"
+                                "!!!",
+                                "\nПоток ${Thread.currentThread().name} | Категория ${category.title} | Рецептов: ${recipesList.size}"
                             )
                             recipesList
                         } catch (e: Exception) {
@@ -111,47 +82,16 @@ class MainActivity : ComponentActivity() {
         setIntent(intent)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        threadPool.shutdown()
-    }
-
 }
 
-// По классике Thread Pools
-object RecipesRepoTP {
-    private fun getRequest(urlString: String): String  {
-        val url = URL(urlString)
-        val conn = url.openConnection() as HttpURLConnection
-        try {
-            conn.connect()
-            return conn.inputStream.bufferedReader().use { it.readText() }
-        } finally {
-            conn.disconnect()
-        }
-    }
+object RecipesRepo {
+    private val client = OkHttpClient()
 
-     fun loadCategories(): List<CategoryDto> {
-        val response = getRequest("${Constants.RECIPES_BASE_URL}/category")
-        return Json.decodeFromString(response)
-    }
-
-     fun loadRecipes(categoryId: Int): List<RecipeDto> {
-        val response = getRequest("${Constants.RECIPES_BASE_URL}/category/$categoryId/recipes")
-        return Json.decodeFromString(response)
-    }
-}
-
-// Через корутины
-object RecipesRepoCoroutines {
     private suspend fun getRequest(urlString: String): String = withContext(Dispatchers.IO) {
-        val url = URL(urlString)
-        val conn = url.openConnection() as HttpURLConnection
-        try {
-            conn.connect()
-            conn.inputStream.bufferedReader().use { it.readText() }
-        } finally {
-            conn.disconnect()
+        val request = Request.Builder().url(urlString).build()
+        client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) throw IOException("Response code: ${response.code}")
+            response.body?.string() ?: throw IOException("Empty response body")
         }
     }
 
