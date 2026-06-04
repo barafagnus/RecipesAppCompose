@@ -17,7 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.vysokov.recipesappcompose.R
 import ru.vysokov.recipesappcompose.core.ui.ScreenHeader
 import ru.vysokov.recipesappcompose.features.recipes.presentation.RecipesViewModel
@@ -28,8 +27,8 @@ import ru.vysokov.recipesappcompose.ui.theme.Dimens
 @Composable
 fun RecipesScreen(
     onRecipeClick: (Int) -> Unit,
+    viewModel: RecipesViewModel
 ) {
-    val viewModel: RecipesViewModel = viewModel()
     val uiState: RecipesUiState by viewModel.uiState.collectAsState()
 
     Column(

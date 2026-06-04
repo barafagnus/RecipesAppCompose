@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.vysokov.recipesappcompose.core.Constants
 import ru.vysokov.recipesappcompose.core.utils.FavoriteDataStoreManager
-import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryStub
+import ru.vysokov.recipesappcompose.data.repository.RecipesRepository
 import ru.vysokov.recipesappcompose.features.details.presentation.model.RecipeDetailsUiState
 import ru.vysokov.recipesappcompose.features.recipes.presentation.model.IngredientsUiModel
 import ru.vysokov.recipesappcompose.features.recipes.presentation.model.RecipeUiModel
@@ -22,6 +22,7 @@ import java.math.BigDecimal
 
 class RecipeDetailsViewModel(
     application: Application,
+    repository: RecipesRepository,
     private val savedStateHandle: SavedStateHandle
 ) : AndroidViewModel(application) {
     private val favoriteManager = FavoriteDataStoreManager(application)
@@ -31,7 +32,7 @@ class RecipeDetailsViewModel(
 
     private val recipeFlow = flow {
         try {
-            val recipe = RecipesRepositoryStub.getRecipeById(recipeId)?.toUiModel()
+            val recipe = repository.getRecipe(recipeId).toUiModel()
             emit(recipe)
         } catch (e: Exception) {
             emit(null)
@@ -62,7 +63,6 @@ class RecipeDetailsViewModel(
         SharingStarted.WhileSubscribed(5000),
         initialValue = RecipeDetailsUiState(isLoading = true)
     )
-
 
     private fun getScaledIngredients(
         recipe: RecipeUiModel,

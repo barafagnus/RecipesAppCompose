@@ -1,6 +1,5 @@
 package ru.vysokov.recipesappcompose.features.recipes.presentation
 
-import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,13 +9,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.vysokov.recipesappcompose.core.Constants
-import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryStub
+import ru.vysokov.recipesappcompose.data.repository.RecipesRepository
 import ru.vysokov.recipesappcompose.features.recipes.presentation.model.RecipesUiState
 import ru.vysokov.recipesappcompose.features.recipes.presentation.model.toUiModel
 import java.net.URLDecoder
 
 class RecipesViewModel(
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val repository: RecipesRepository
 ) : ViewModel() {
     val categoryId: Int = savedStateHandle[Constants.KEY_CATEGORY_ID]
         ?: error("Category ID is required.")
@@ -41,7 +41,7 @@ class RecipesViewModel(
 
         viewModelScope.launch {
             try {
-                val result = RecipesRepositoryStub.getRecipesByCategoryId(categoryId)
+                val result = repository.getRecipesByCategory(categoryId)
                 _uiState.update { state ->
                     state.copy(
                         recipes = result.map { it.toUiModel() },

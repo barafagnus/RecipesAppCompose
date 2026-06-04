@@ -18,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.vysokov.recipesappcompose.core.ui.FavoritesButton
 import ru.vysokov.recipesappcompose.core.ui.ScreenHeader
 import ru.vysokov.recipesappcompose.core.ui.ShareButton
@@ -33,8 +32,8 @@ import ru.vysokov.recipesappcompose.ui.theme.Dimens
 @Composable
 fun RecipeDetailsScreen(
     modifier: Modifier = Modifier,
+    viewModel: RecipeDetailsViewModel
 ) {
-    val viewModel: RecipeDetailsViewModel = viewModel()
     val uiState: RecipeDetailsUiState by viewModel.uiState.collectAsState()
     val recipe = uiState.recipe
     val context = LocalContext.current
