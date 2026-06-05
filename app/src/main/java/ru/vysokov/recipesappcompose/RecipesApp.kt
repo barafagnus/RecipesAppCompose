@@ -2,6 +2,7 @@ package ru.vysokov.recipesappcompose
 
 import android.app.Application
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -22,6 +23,7 @@ import kotlinx.coroutines.delay
 import ru.vysokov.recipesappcompose.core.Constants
 import ru.vysokov.recipesappcompose.core.utils.FavoriteDataStoreManager
 import ru.vysokov.recipesappcompose.data.repository.RetrofitClient
+import ru.vysokov.recipesappcompose.features.categories.presentation.model.toUiModel
 import ru.vysokov.recipesappcompose.features.categories.ui.CategoriesScreen
 import ru.vysokov.recipesappcompose.features.details.presentation.RecipeDetailsViewModel
 import ru.vysokov.recipesappcompose.features.details.ui.RecipeDetailsScreen

@@ -1,5 +1,6 @@
 package ru.vysokov.recipesappcompose.features.categories.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
