@@ -2,7 +2,6 @@ package ru.vysokov.recipesappcompose.features.recipes.ui.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -14,12 +13,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import coil3.compose.AsyncImage
-import ru.vysokov.recipesappcompose.R
+import ru.vysokov.recipesappcompose.core.ui.RecipeImage
 import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryStub
 import ru.vysokov.recipesappcompose.features.recipes.presentation.model.RecipeUiModel
 import ru.vysokov.recipesappcompose.features.recipes.presentation.model.toUiModel
@@ -40,17 +36,10 @@ fun RecipeItem(
         onClick = { onClick(model.id) }
     ) {
         Column() {
-            AsyncImage(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(Dimens.recipeCardImageWidth),
-                contentScale = ContentScale.Crop,
-                model = model.imageUrl,
-                contentDescription = "",
-                placeholder = painterResource(R.drawable.img_placeholder),
-                error = painterResource(R.drawable.img_error)
+            RecipeImage(
+                imageUrl = model.imageUrl,
+                contentDescription = "recipe"
             )
-
             Text(
                 modifier = Modifier
                     .padding(Dimens.paddingSmall),

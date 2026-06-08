@@ -2,7 +2,6 @@ package ru.vysokov.recipesappcompose.features.categories.ui.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,12 +12,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import coil3.compose.AsyncImage
-import ru.vysokov.recipesappcompose.R
+import ru.vysokov.recipesappcompose.core.ui.RecipeImage
 import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryStub
 import ru.vysokov.recipesappcompose.features.categories.presentation.model.CategoryUiModel
 import ru.vysokov.recipesappcompose.features.categories.presentation.model.toUiModel
@@ -40,15 +36,9 @@ fun CategoryItem(
         onClick = onClick
     ) {
         Column {
-            AsyncImage(
-                modifier = Modifier
-                    .aspectRatio(1.2f)
-                    .fillMaxWidth(),
-                contentScale = ContentScale.Crop,
-                model = category.imageUrl,
-                contentDescription = "",
-                placeholder = painterResource(R.drawable.img_placeholder),
-                error = painterResource(R.drawable.img_error)
+            RecipeImage(
+                imageUrl = category.imageUrl,
+                contentDescription = "category"
             )
 
             Spacer(modifier = Modifier.height(Dimens.spacerMedium))
