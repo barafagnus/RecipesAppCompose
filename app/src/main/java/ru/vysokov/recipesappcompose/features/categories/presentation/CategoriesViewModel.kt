@@ -1,10 +1,7 @@
 package ru.vysokov.recipesappcompose.features.categories.presentation
 
-import android.util.Log
-import android.util.Log.e
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import coil3.util.CoilUtils.result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
