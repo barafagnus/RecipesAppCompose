@@ -1,10 +1,11 @@
 package ru.vysokov.recipesappcompose.data.repository
 
+import kotlinx.coroutines.flow.Flow
 import ru.vysokov.recipesappcompose.data.model.CategoryDto
 import ru.vysokov.recipesappcompose.data.model.RecipeDto
 
 interface RecipesRepository {
-    suspend fun getCategories(): List<CategoryDto>
-    suspend fun getRecipesByCategory(categoryId: Int): List<RecipeDto>
+    fun getCategories(): Flow<List<CategoryDto>>
+    fun getRecipesByCategory(categoryId: Int): Flow<List<RecipeDto>>
     suspend fun getRecipe(recipeId: Int): RecipeDto
 }

@@ -1,11 +1,14 @@
 package ru.vysokov.recipesappcompose.features.categories.presentation
 
 import android.util.Log
+import android.util.Log.e
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import coil3.util.CoilUtils.result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.vysokov.recipesappcompose.data.repository.RecipesRepository
@@ -28,8 +31,11 @@ class CategoriesViewModel(
 
         viewModelScope.launch {
             try {
-                val result = repository.getCategories().map { it.toUiModel() }
-                _uiState.update { it.copy(categories = result, isLoading = false) }
+                repository.getCategories()
+                    .map { dtos -> dtos.map { it.toUiModel() } }
+                    .collect { categories ->
+                        _uiState.update { it.copy(categories = categories, isLoading = false) }
+                    }
             } catch (e: Exception) {
                 _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
             }

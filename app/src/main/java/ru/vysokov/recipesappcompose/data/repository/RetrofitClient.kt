@@ -1,6 +1,5 @@
 package ru.vysokov.recipesappcompose.data.repository
 
-import android.R.attr.level
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -11,7 +10,6 @@ import ru.vysokov.recipesappcompose.BuildConfig
 import ru.vysokov.recipesappcompose.core.network.NetworkConfig
 import ru.vysokov.recipesappcompose.core.network.api.RecipesApiService
 import java.util.concurrent.TimeUnit
-import kotlin.math.log
 
 object RetrofitClient {
     private val contentType = "application/json".toMediaType()
@@ -34,7 +32,7 @@ object RetrofitClient {
         .addInterceptor(loggingInterceptor)
         .build()
 
-    private val apiService: RecipesApiService by lazy {
+    val apiService: RecipesApiService by lazy {
         Retrofit.Builder()
             .baseUrl(NetworkConfig.BASE_URL)
             .client(okHttpClient)
@@ -43,7 +41,4 @@ object RetrofitClient {
             .create(RecipesApiService::class.java)
     }
 
-    val recipesRepository: RecipesRepository by lazy {
-        RecipesRepositoryImpl(apiService)
-    }
 }

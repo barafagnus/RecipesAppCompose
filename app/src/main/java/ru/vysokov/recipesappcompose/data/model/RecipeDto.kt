@@ -1,6 +1,7 @@
 package ru.vysokov.recipesappcompose.data.model
 
 import kotlinx.serialization.Serializable
+import ru.vysokov.recipesappcompose.data.database.entity.RecipeEntity
 
 @Serializable
 data class RecipeDto(
@@ -10,3 +11,13 @@ data class RecipeDto(
     val method: List<String>,
     val imageUrl: String
 )
+
+fun RecipeDto.toEntity(categoryId: Int) =
+    RecipeEntity(
+        id = id,
+        title = title,
+        categoryId = categoryId,
+        imageUrl = imageUrl,
+        ingredients = ingredients,
+        method = method
+    )
