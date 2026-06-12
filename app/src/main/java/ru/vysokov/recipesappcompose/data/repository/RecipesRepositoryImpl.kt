@@ -9,7 +9,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.vysokov.recipesappcompose.core.network.api.RecipesApiService
 import ru.vysokov.recipesappcompose.data.database.RecipesDatabase
-import ru.vysokov.recipesappcompose.data.database.dao.CategoryDao
 import ru.vysokov.recipesappcompose.data.database.entity.toCategoryDto
 import ru.vysokov.recipesappcompose.data.database.entity.toRecipeDto
 import ru.vysokov.recipesappcompose.data.model.CategoryDto
