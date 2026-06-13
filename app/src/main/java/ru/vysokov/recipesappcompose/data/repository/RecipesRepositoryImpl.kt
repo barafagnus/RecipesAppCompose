@@ -1,35 +1,57 @@
 package ru.vysokov.recipesappcompose.data.repository
 
 import android.util.Log
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.vysokov.recipesappcompose.core.network.api.RecipesApiService
+import ru.vysokov.recipesappcompose.data.database.RecipesDatabase
+import ru.vysokov.recipesappcompose.data.database.entity.toCategoryDto
+import ru.vysokov.recipesappcompose.data.database.entity.toRecipeDto
 import ru.vysokov.recipesappcompose.data.model.CategoryDto
 import ru.vysokov.recipesappcompose.data.model.RecipeDto
+import ru.vysokov.recipesappcompose.data.model.toEntity
 
 class RecipesRepositoryImpl(
-    private val recipesApiService: RecipesApiService
+    private val recipesApiService: RecipesApiService,
+    database: RecipesDatabase
 ) : RecipesRepository {
-    override suspend fun getCategories(): List<CategoryDto> {
-        return withContext(Dispatchers.IO) {
+    private val categoryDao = database.categoryDao()
+    private val recipeDao = database.recipeDao()
+
+    override fun getCategories(): Flow<List<CategoryDto>> {
+        CoroutineScope(Dispatchers.IO).launch {
             try {
-                recipesApiService.getCategories()
+                val categories = recipesApiService.getCategories()
+                categoryDao.insertCategories(categories = categories.map { it.toEntity() })
             } catch (e: Exception) {
                 Log.e("Network", "Error load categories: ${e.message}")
-                emptyList()
             }
         }
+
+        return categoryDao.getAllCategories()
+            .map { entities ->
+                entities.map { it.toCategoryDto() }
+            }
     }
 
-    override suspend fun getRecipesByCategory(categoryId: Int): List<RecipeDto> {
-        return withContext(Dispatchers.IO) {
+    override fun getRecipesByCategory(categoryId: Int): Flow<List<RecipeDto>> {
+        CoroutineScope(Dispatchers.IO).launch {
             try {
-                recipesApiService.getRecipesByCategory(categoryId = categoryId)
+                val recipes = recipesApiService.getRecipesByCategory(categoryId)
+                recipeDao.insertRecipes(recipes = recipes.map { it.toEntity(categoryId) })
             } catch (e: Exception) {
                 Log.e("Network", "Error load recipes, categoryId=$categoryId: ${e.message}")
-                emptyList()
             }
         }
+
+        return recipeDao.getRecipesByCategory(categoryId)
+            .map { entities ->
+                entities.map { it.toRecipeDto() }
+            }
     }
 
     override suspend fun getRecipe(recipeId: Int): RecipeDto {

@@ -1,12 +1,12 @@
 package ru.vysokov.recipesappcompose.features.recipes.presentation
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.vysokov.recipesappcompose.core.Constants
@@ -42,16 +42,20 @@ class RecipesViewModel(
 
         viewModelScope.launch {
             try {
-                val result = repository.getRecipesByCategory(categoryId)
-                _uiState.update { state ->
-                    state.copy(
-                        recipes = result.map { it.toUiModel() },
-                        categoryId = categoryId,
-                        categoryTitle = categoryTitle,
-                        categoryImageUrl = categoryImageUrl,
-                        isLoading = false
-                    )
-                }
+                repository.getRecipesByCategory(categoryId)
+                    .map { dtos -> dtos.map { it.toUiModel() } }
+                    .collect { recipes ->
+                        _uiState.update { state ->
+                            state.copy(
+                                recipes = recipes,
+                                categoryId = categoryId,
+                                categoryTitle = categoryTitle,
+                                categoryImageUrl = categoryImageUrl,
+                                isLoading = false
+                            )
+                        }
+                    }
+
 
             } catch (e: Exception) {
                 _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }

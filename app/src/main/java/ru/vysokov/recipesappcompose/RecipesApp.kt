@@ -2,7 +2,6 @@ package ru.vysokov.recipesappcompose
 
 import android.app.Application
 import android.content.Intent
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -22,8 +21,9 @@ import androidx.navigation.navArgument
 import kotlinx.coroutines.delay
 import ru.vysokov.recipesappcompose.core.Constants
 import ru.vysokov.recipesappcompose.core.utils.FavoriteDataStoreManager
+import ru.vysokov.recipesappcompose.data.database.RecipesDatabase
+import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryImpl
 import ru.vysokov.recipesappcompose.data.repository.RetrofitClient
-import ru.vysokov.recipesappcompose.features.categories.presentation.model.toUiModel
 import ru.vysokov.recipesappcompose.features.categories.ui.CategoriesScreen
 import ru.vysokov.recipesappcompose.features.details.presentation.RecipeDetailsViewModel
 import ru.vysokov.recipesappcompose.features.details.ui.RecipeDetailsScreen
@@ -43,7 +43,13 @@ fun RecipesApp(deepLinkIntent: Intent?) {
     val favoritesManager =
         remember { FavoriteDataStoreManager(context = context) }
     val favoritesCount by favoritesManager.getFavoriteCountFlow().collectAsState(initial = 0)
-    val recipesRepositoryImpl = remember { RetrofitClient.recipesRepository }
+    val database = remember { RecipesDatabase.getDatabase(context = context) }
+    val recipesRepository = remember {
+        RecipesRepositoryImpl(
+            recipesApiService = RetrofitClient.apiService,
+            database = database
+        )
+    }
 
     LaunchedEffect(deepLinkIntent) {
         deepLinkIntent?.data?.let { uri ->
@@ -108,7 +114,7 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                                 )
                             )
                         },
-                        repository = recipesRepositoryImpl
+                        repository = recipesRepository
                     )
                 }
 
@@ -121,7 +127,7 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                     )
                 ) { navBackStackEntry ->
                     val recipesViewModel = remember(navBackStackEntry) {
-                        RecipesViewModel(navBackStackEntry.savedStateHandle, recipesRepositoryImpl)
+                        RecipesViewModel(navBackStackEntry.savedStateHandle, recipesRepository)
                     }
                     RecipesScreen(
                         onRecipeClick = { recipeId ->
@@ -153,7 +159,7 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                         RecipeDetailsViewModel(
                             application = context as Application,
                             savedStateHandle = navBackStackEntry.savedStateHandle,
-                            repository = recipesRepositoryImpl
+                            repository = recipesRepository
                         )
                     }
                     RecipeDetailsScreen(
