@@ -48,7 +48,7 @@ class RecipesRepositoryImpl(
             }
         }
 
-        return recipeDao.getAllRecipes()
+        return recipeDao.getRecipesByCategory(categoryId)
             .map { entities ->
                 entities.map { it.toRecipeDto() }
             }
