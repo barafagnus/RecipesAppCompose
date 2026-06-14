@@ -30,21 +30,13 @@ class RecipeDetailsViewModel(
 
     private val _portions = MutableStateFlow(1)
 
-    private val recipeFlow = flow {
-        try {
-            val recipe = repository.getRecipe(recipeId).toUiModel()
-            emit(recipe)
-        } catch (e: Exception) {
-            emit(null)
-        }
-    }
-
     val uiState: StateFlow<RecipeDetailsUiState> = combine(
-        recipeFlow,
+        repository.getRecipe(recipeId),
         favoriteManager.isFavoriteFlow(recipeId),
         _portions
-    ) { recipe, isFavorite, portions ->
-        if (recipe != null) {
+    ) { recipeFlow, isFavorite, portions ->
+        if (recipeFlow != null) {
+            val recipe = recipeFlow.toUiModel()
             RecipeDetailsUiState(
                 recipe = recipe,
                 isFavorite = isFavorite,

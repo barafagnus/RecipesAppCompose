@@ -54,14 +54,17 @@ class RecipesRepositoryImpl(
             }
     }
 
-    override suspend fun getRecipe(recipeId: Int): RecipeDto {
-        return withContext(Dispatchers.IO) {
+    override fun getRecipe(recipeId: Int): Flow<RecipeDto?> {
+        CoroutineScope(Dispatchers.IO).launch {
             try {
                 recipesApiService.getRecipe(recipeId = recipeId)
+                Log.d("Network", "Детали рецепта получены из API")
             } catch (e: Exception) {
                 Log.e("Network", "Error load recipe, recipeId=$recipeId: ${e.message}")
-                throw e
             }
         }
+
+        return recipeDao.getRecipeById(recipeId)
+            .map { entity -> entity?.toRecipeDto() }
     }
 }
