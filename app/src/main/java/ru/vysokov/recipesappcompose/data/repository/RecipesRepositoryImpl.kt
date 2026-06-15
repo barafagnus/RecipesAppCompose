@@ -4,6 +4,7 @@ import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.vysokov.recipesappcompose.core.network.api.RecipesApiService
@@ -56,7 +57,10 @@ class RecipesRepositoryImpl(
     override fun getRecipe(recipeId: Int): Flow<RecipeDto?> {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                recipesApiService.getRecipe(recipeId = recipeId)
+                val recipe = recipesApiService.getRecipe(recipeId = recipeId)
+                val categoryId = recipeDao.getRecipeById(recipeId).first()?.categoryId ?: 0
+
+                recipeDao.insertRecipe(recipe.toEntity(categoryId))
                 Log.d("Network", "Детали рецепта получены из API")
             } catch (e: Exception) {
                 Log.e("Network", "Error load recipe, recipeId=$recipeId: ${e.message}")

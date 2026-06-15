@@ -28,13 +28,16 @@ class RecipeDetailsViewModel(
     private val recipeId = savedStateHandle.get<Int>(Constants.KEY_RECIPE_ID) ?: 0
 
     private val _portions = MutableStateFlow(1)
+    private val _isInitialLoad = MutableStateFlow(true)
 
     val uiState: StateFlow<RecipeDetailsUiState> = combine(
         repository.getRecipe(recipeId),
         favoriteManager.isFavoriteFlow(recipeId),
-        _portions
-    ) { recipeFlow, isFavorite, portions ->
+        _portions,
+        _isInitialLoad
+    ) { recipeFlow, isFavorite, portions, isInitialLoad ->
         if (recipeFlow != null) {
+            _isInitialLoad.value = false
             val recipe = recipeFlow.toUiModel()
             RecipeDetailsUiState(
                 recipe = recipe,
@@ -43,6 +46,8 @@ class RecipeDetailsViewModel(
                 scaledIngredients = getScaledIngredients(recipe, portions),
                 isLoading = false
             )
+        } else if (isInitialLoad) {
+            RecipeDetailsUiState(isLoading = true)
         } else {
             RecipeDetailsUiState(
                 errorMessage = "Рецепт не найден.",
