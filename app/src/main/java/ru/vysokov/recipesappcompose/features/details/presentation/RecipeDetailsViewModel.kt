@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.vysokov.recipesappcompose.core.Constants
@@ -29,22 +28,17 @@ class RecipeDetailsViewModel(
     private val recipeId = savedStateHandle.get<Int>(Constants.KEY_RECIPE_ID) ?: 0
 
     private val _portions = MutableStateFlow(1)
-
-    private val recipeFlow = flow {
-        try {
-            val recipe = repository.getRecipe(recipeId).toUiModel()
-            emit(recipe)
-        } catch (e: Exception) {
-            emit(null)
-        }
-    }
+    private val _isInitialLoad = MutableStateFlow(true)
 
     val uiState: StateFlow<RecipeDetailsUiState> = combine(
-        recipeFlow,
+        repository.getRecipe(recipeId),
         favoriteManager.isFavoriteFlow(recipeId),
-        _portions
-    ) { recipe, isFavorite, portions ->
-        if (recipe != null) {
+        _portions,
+        _isInitialLoad
+    ) { recipeFlow, isFavorite, portions, isInitialLoad ->
+        if (recipeFlow != null) {
+            _isInitialLoad.value = false
+            val recipe = recipeFlow.toUiModel()
             RecipeDetailsUiState(
                 recipe = recipe,
                 isFavorite = isFavorite,
@@ -52,6 +46,8 @@ class RecipeDetailsViewModel(
                 scaledIngredients = getScaledIngredients(recipe, portions),
                 isLoading = false
             )
+        } else if (isInitialLoad) {
+            RecipeDetailsUiState(isLoading = true)
         } else {
             RecipeDetailsUiState(
                 errorMessage = "Рецепт не найден.",
