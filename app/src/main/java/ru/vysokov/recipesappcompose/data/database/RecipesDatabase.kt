@@ -29,7 +29,7 @@ abstract class RecipesDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: RecipesDatabase? = null
 
-        fun getDatabase(context: Context): RecipesDatabase {
+        fun buildDatabase(context: Context): RecipesDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context = context.applicationContext,

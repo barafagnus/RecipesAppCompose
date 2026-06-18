@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".app.di.RecipeApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -15,9 +15,9 @@
         android:theme="@style/Theme.RecipesAppCompose">
         <activity
             android:name=".MainActivity"
-            android:launchMode="singleTop"
             android:exported="true"
             android:label="@string/app_name"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.RecipesAppCompose">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,17 +28,23 @@
             <!-- Custom Deep Link: recipeapp:// -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="recipeapp" />
             </intent-filter>
 
             <!-- Web Link: https://recipes.androidsprint.ru -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="recipes.androidsprint.ru" />
+
+                <data
+                    android:host="recipes.androidsprint.ru"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
     </application>

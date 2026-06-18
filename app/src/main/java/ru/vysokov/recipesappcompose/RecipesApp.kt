@@ -19,16 +19,15 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import kotlinx.coroutines.delay
+import ru.vysokov.recipesappcompose.app.di.RecipeApplication
+import ru.vysokov.recipesappcompose.app.di.RecipeDetailsViewModelFactory
+import ru.vysokov.recipesappcompose.app.di.RecipesViewModelFactory
 import ru.vysokov.recipesappcompose.core.Constants
 import ru.vysokov.recipesappcompose.core.utils.FavoriteDataStoreManager
-import ru.vysokov.recipesappcompose.data.database.RecipesDatabase
-import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryImpl
-import ru.vysokov.recipesappcompose.data.repository.RetrofitClient
 import ru.vysokov.recipesappcompose.features.categories.ui.CategoriesScreen
 import ru.vysokov.recipesappcompose.features.details.presentation.RecipeDetailsViewModel
 import ru.vysokov.recipesappcompose.features.details.ui.RecipeDetailsScreen
 import ru.vysokov.recipesappcompose.features.favorites.ui.FavoritesScreen
-import ru.vysokov.recipesappcompose.features.recipes.presentation.RecipesViewModel
 import ru.vysokov.recipesappcompose.features.recipes.ui.RecipesScreen
 import ru.vysokov.recipesappcompose.ui.navigation.BottomNavigation
 import ru.vysokov.recipesappcompose.ui.navigation.Destination
@@ -43,13 +42,8 @@ fun RecipesApp(deepLinkIntent: Intent?) {
     val favoritesManager =
         remember { FavoriteDataStoreManager(context = context) }
     val favoritesCount by favoritesManager.getFavoriteCountFlow().collectAsState(initial = 0)
-    val database = remember { RecipesDatabase.getDatabase(context = context) }
-    val recipesRepository = remember {
-        RecipesRepositoryImpl(
-            recipesApiService = RetrofitClient.apiService,
-            database = database
-        )
-    }
+    val appContainer = (LocalContext.current.applicationContext as RecipeApplication).appContainer
+    val recipesRepository = appContainer.recipesRepository
 
     LaunchedEffect(deepLinkIntent) {
         deepLinkIntent?.data?.let { uri ->
@@ -113,8 +107,7 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                                     categoryImageUrl
                                 )
                             )
-                        },
-                        repository = recipesRepository
+                        }
                     )
                 }
 
@@ -127,8 +120,13 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                     )
                 ) { navBackStackEntry ->
                     val recipesViewModel = remember(navBackStackEntry) {
-                        RecipesViewModel(navBackStackEntry.savedStateHandle, recipesRepository)
+                        RecipesViewModelFactory(
+                            repository = recipesRepository,
+                            savedStateHandle = navBackStackEntry.savedStateHandle
+                        )
+                            .create()
                     }
+
                     RecipesScreen(
                         onRecipeClick = { recipeId ->
                             navController.navigate(
@@ -155,13 +153,16 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                         type = NavType.IntType
                     })
                 ) { navBackStackEntry ->
-                    val recipeDetailsViewModel = remember(navBackStackEntry) {
-                        RecipeDetailsViewModel(
-                            application = context as Application,
-                            savedStateHandle = navBackStackEntry.savedStateHandle,
-                            repository = recipesRepository
-                        )
-                    }
+
+                    val recipeDetailsViewModel: RecipeDetailsViewModel =
+                        remember(navBackStackEntry) {
+                            RecipeDetailsViewModelFactory(
+                                repository = appContainer.recipesRepository,
+                                application = context.applicationContext as Application,
+                                savedStateHandle = navBackStackEntry.savedStateHandle
+                            )
+                                .create()
+                        }
                     RecipeDetailsScreen(
                         viewModel = recipeDetailsViewModel
                     )
