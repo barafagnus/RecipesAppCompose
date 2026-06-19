@@ -15,14 +15,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.vysokov.recipesappcompose.R
+import ru.vysokov.recipesappcompose.app.di.FavoritesViewModelFactory
+import ru.vysokov.recipesappcompose.app.di.RecipeApplication
 import ru.vysokov.recipesappcompose.core.ui.ScreenHeader
-import ru.vysokov.recipesappcompose.features.favorites.presentation.FavoritesViewModel
 import ru.vysokov.recipesappcompose.features.favorites.presentation.model.FavoritesUiState
 import ru.vysokov.recipesappcompose.features.recipes.ui.component.RecipeItem
 import ru.vysokov.recipesappcompose.ui.theme.Dimens
@@ -31,7 +33,11 @@ import ru.vysokov.recipesappcompose.ui.theme.Dimens
 fun FavoritesScreen(
     onRecipeClick: (Int) -> Unit,
 ) {
-    val viewModel: FavoritesViewModel = viewModel()
+    val application = LocalContext.current.applicationContext as RecipeApplication
+
+    val viewModel = remember {
+        FavoritesViewModelFactory(application).create()
+    }
     val uiState: FavoritesUiState by viewModel.uiState.collectAsState()
 
     Column(

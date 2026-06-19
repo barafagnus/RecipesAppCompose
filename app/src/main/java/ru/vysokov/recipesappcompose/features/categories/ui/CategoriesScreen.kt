@@ -17,10 +17,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import ru.vysokov.recipesappcompose.R
+import ru.vysokov.recipesappcompose.app.di.CategoriesViewModelFactory
+import ru.vysokov.recipesappcompose.app.di.RecipeApplication
 import ru.vysokov.recipesappcompose.core.ui.ScreenHeader
-import ru.vysokov.recipesappcompose.data.repository.RecipesRepository
 import ru.vysokov.recipesappcompose.features.categories.presentation.CategoriesViewModel
 import ru.vysokov.recipesappcompose.features.categories.ui.component.CategoryItem
 import ru.vysokov.recipesappcompose.ui.theme.Dimens
@@ -29,10 +31,11 @@ import ru.vysokov.recipesappcompose.ui.theme.Dimens
 fun CategoriesScreen(
     modifier: Modifier = Modifier,
     onCategoryClick: (Int, String, String) -> Unit,
-    repository: RecipesRepository
 ) {
+    val appContainer = (LocalContext.current.applicationContext as RecipeApplication).appContainer
+
     val viewModel: CategoriesViewModel = remember {
-        CategoriesViewModel(repository)
+        CategoriesViewModelFactory(appContainer.recipesRepository).create()
     }
 
     val uiState by viewModel.uiState.collectAsState()
