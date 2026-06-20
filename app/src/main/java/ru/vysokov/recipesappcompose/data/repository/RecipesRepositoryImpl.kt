@@ -14,8 +14,9 @@ import ru.vysokov.recipesappcompose.data.database.entity.toRecipeDto
 import ru.vysokov.recipesappcompose.data.model.CategoryDto
 import ru.vysokov.recipesappcompose.data.model.RecipeDto
 import ru.vysokov.recipesappcompose.data.model.toEntity
+import javax.inject.Inject
 
-class RecipesRepositoryImpl(
+class RecipesRepositoryImpl @Inject constructor(
     private val recipesApiService: RecipesApiService,
     database: RecipesDatabase
 ) : RecipesRepository {

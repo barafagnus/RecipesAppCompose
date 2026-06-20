@@ -2,6 +2,7 @@ package ru.vysokov.recipesappcompose.features.categories.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,8 +12,10 @@ import kotlinx.coroutines.launch
 import ru.vysokov.recipesappcompose.data.repository.RecipesRepository
 import ru.vysokov.recipesappcompose.features.categories.presentation.model.CategoriesUiState
 import ru.vysokov.recipesappcompose.features.categories.presentation.model.toUiModel
+import javax.inject.Inject
 
-class CategoriesViewModel(
+@HiltViewModel
+class CategoriesViewModel @Inject constructor(
     private val repository: RecipesRepository
 ) : ViewModel() {
 

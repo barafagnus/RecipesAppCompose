@@ -1,8 +1,8 @@
 package ru.vysokov.recipesappcompose.features.favorites.presentation
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -14,14 +14,15 @@ import ru.vysokov.recipesappcompose.core.utils.FavoriteDataStoreManager
 import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryStub
 import ru.vysokov.recipesappcompose.features.favorites.presentation.model.FavoritesUiState
 import ru.vysokov.recipesappcompose.features.recipes.presentation.model.toUiModel
+import javax.inject.Inject
 
-class FavoritesViewModel(
-    application: Application,
-) : AndroidViewModel(application) {
-    private val favoriteManager = FavoriteDataStoreManager(application)
+@HiltViewModel
+class FavoritesViewModel @Inject constructor(
+    private val favoritesManager: FavoriteDataStoreManager
+) : ViewModel() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val uiState: StateFlow<FavoritesUiState> = favoriteManager
+    val uiState: StateFlow<FavoritesUiState> = favoritesManager
         .getFavoritesIdsFlow()
         .flatMapLatest { ids ->
             loadFavoriteRecipes(ids)
