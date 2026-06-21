@@ -7,17 +7,19 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import ru.vysokov.recipesappcompose.core.utils.FavoriteDataStoreManager
-import ru.vysokov.recipesappcompose.data.repository.RecipesRepositoryStub
+import ru.vysokov.recipesappcompose.data.repository.RecipesRepository
 import ru.vysokov.recipesappcompose.features.favorites.presentation.model.FavoritesUiState
 import ru.vysokov.recipesappcompose.features.recipes.presentation.model.toUiModel
 import javax.inject.Inject
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
+    private val repository: RecipesRepository,
     private val favoritesManager: FavoriteDataStoreManager
 ) : ViewModel() {
 
@@ -38,8 +40,8 @@ class FavoritesViewModel @Inject constructor(
 
         try {
             val recipes = ids.mapNotNull {
-                val id = it.toIntOrNull()
-                RecipesRepositoryStub.getRecipeById(id)?.toUiModel()
+                val id = it.toIntOrNull() ?: return@mapNotNull null
+                repository.getRecipe(id).first()?.toUiModel()
             }
             emit(
                 FavoritesUiState(

@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    favoritesManager: FavoriteDataStoreManager
+    private val favoritesManager: FavoriteDataStoreManager
 ) : ViewModel() {
     val favoritesCount: StateFlow<Int> = favoritesManager.getFavoriteCountFlow()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)

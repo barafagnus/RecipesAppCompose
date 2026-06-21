@@ -22,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecipeDetailsViewModel @Inject constructor(
-    repository: RecipesRepository,
+    private val repository: RecipesRepository,
     private val savedStateHandle: SavedStateHandle,
     private val favoritesManager: FavoriteDataStoreManager
 ) : ViewModel() {
