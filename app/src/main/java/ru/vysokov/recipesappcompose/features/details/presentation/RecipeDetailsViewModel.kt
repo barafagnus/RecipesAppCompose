@@ -1,9 +1,9 @@
 package ru.vysokov.recipesappcompose.features.details.presentation
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -18,13 +18,14 @@ import ru.vysokov.recipesappcompose.features.recipes.presentation.model.Ingredie
 import ru.vysokov.recipesappcompose.features.recipes.presentation.model.RecipeUiModel
 import ru.vysokov.recipesappcompose.features.recipes.presentation.model.toUiModel
 import java.math.BigDecimal
+import javax.inject.Inject
 
-class RecipeDetailsViewModel(
-    application: Application,
-    repository: RecipesRepository,
-    private val savedStateHandle: SavedStateHandle
-) : AndroidViewModel(application) {
-    private val favoriteManager = FavoriteDataStoreManager(application)
+@HiltViewModel
+class RecipeDetailsViewModel @Inject constructor(
+    private val repository: RecipesRepository,
+    private val savedStateHandle: SavedStateHandle,
+    private val favoritesManager: FavoriteDataStoreManager
+) : ViewModel() {
     private val recipeId = savedStateHandle.get<Int>(Constants.KEY_RECIPE_ID) ?: 0
 
     private val _portions = MutableStateFlow(1)
@@ -32,7 +33,7 @@ class RecipeDetailsViewModel(
 
     val uiState: StateFlow<RecipeDetailsUiState> = combine(
         repository.getRecipe(recipeId),
-        favoriteManager.isFavoriteFlow(recipeId),
+        favoritesManager.isFavoriteFlow(recipeId),
         _portions,
         _isInitialLoad
     ) { recipeFlow, isFavorite, portions, isInitialLoad ->
@@ -81,8 +82,8 @@ class RecipeDetailsViewModel(
         viewModelScope.launch {
             val isFavorite = uiState.value.isFavorite
 
-            if (isFavorite) favoriteManager.removeFavorite(recipeId)
-            else favoriteManager.addFavorite(recipeId)
+            if (isFavorite) favoritesManager.removeFavorite(recipeId)
+            else favoritesManager.addFavorite(recipeId)
         }
     }
 

@@ -1,6 +1,5 @@
 package ru.vysokov.recipesappcompose
 
-import android.app.Application
 import android.content.Intent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -9,9 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -19,15 +17,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import kotlinx.coroutines.delay
-import ru.vysokov.recipesappcompose.app.di.RecipeApplication
-import ru.vysokov.recipesappcompose.app.di.RecipeDetailsViewModelFactory
-import ru.vysokov.recipesappcompose.app.di.RecipesViewModelFactory
 import ru.vysokov.recipesappcompose.core.Constants
-import ru.vysokov.recipesappcompose.core.utils.FavoriteDataStoreManager
 import ru.vysokov.recipesappcompose.features.categories.ui.CategoriesScreen
 import ru.vysokov.recipesappcompose.features.details.presentation.RecipeDetailsViewModel
 import ru.vysokov.recipesappcompose.features.details.ui.RecipeDetailsScreen
 import ru.vysokov.recipesappcompose.features.favorites.ui.FavoritesScreen
+import ru.vysokov.recipesappcompose.features.recipes.presentation.RecipesViewModel
 import ru.vysokov.recipesappcompose.features.recipes.ui.RecipesScreen
 import ru.vysokov.recipesappcompose.ui.navigation.BottomNavigation
 import ru.vysokov.recipesappcompose.ui.navigation.Destination
@@ -38,12 +33,8 @@ fun RecipesApp(deepLinkIntent: Intent?) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    val context = LocalContext.current.applicationContext
-    val favoritesManager =
-        remember { FavoriteDataStoreManager(context = context) }
-    val favoritesCount by favoritesManager.getFavoriteCountFlow().collectAsState(initial = 0)
-    val appContainer = (LocalContext.current.applicationContext as RecipeApplication).appContainer
-    val recipesRepository = appContainer.recipesRepository
+    val mainViewModel: MainViewModel = hiltViewModel()
+    val favoritesCount by mainViewModel.favoritesCount.collectAsState()
 
     LaunchedEffect(deepLinkIntent) {
         deepLinkIntent?.data?.let { uri ->
@@ -119,13 +110,7 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                         navArgument(Constants.KEY_CATEGORY_IMAGE_URL) { type = NavType.StringType },
                     )
                 ) { navBackStackEntry ->
-                    val recipesViewModel = remember(navBackStackEntry) {
-                        RecipesViewModelFactory(
-                            repository = recipesRepository,
-                            savedStateHandle = navBackStackEntry.savedStateHandle
-                        )
-                            .create()
-                    }
+                    val recipesViewModel: RecipesViewModel = hiltViewModel()
 
                     RecipesScreen(
                         onRecipeClick = { recipeId ->
@@ -153,16 +138,7 @@ fun RecipesApp(deepLinkIntent: Intent?) {
                         type = NavType.IntType
                     })
                 ) { navBackStackEntry ->
-
-                    val recipeDetailsViewModel: RecipeDetailsViewModel =
-                        remember(navBackStackEntry) {
-                            RecipeDetailsViewModelFactory(
-                                repository = appContainer.recipesRepository,
-                                application = context.applicationContext as Application,
-                                savedStateHandle = navBackStackEntry.savedStateHandle
-                            )
-                                .create()
-                        }
+                    val recipeDetailsViewModel: RecipeDetailsViewModel = hiltViewModel()
                     RecipeDetailsScreen(
                         viewModel = recipeDetailsViewModel
                     )

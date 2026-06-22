@@ -14,14 +14,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import ru.vysokov.recipesappcompose.R
-import ru.vysokov.recipesappcompose.app.di.CategoriesViewModelFactory
-import ru.vysokov.recipesappcompose.app.di.RecipeApplication
 import ru.vysokov.recipesappcompose.core.ui.ScreenHeader
 import ru.vysokov.recipesappcompose.features.categories.presentation.CategoriesViewModel
 import ru.vysokov.recipesappcompose.features.categories.ui.component.CategoryItem
@@ -32,12 +29,7 @@ fun CategoriesScreen(
     modifier: Modifier = Modifier,
     onCategoryClick: (Int, String, String) -> Unit,
 ) {
-    val appContainer = (LocalContext.current.applicationContext as RecipeApplication).appContainer
-
-    val viewModel: CategoriesViewModel = remember {
-        CategoriesViewModelFactory(appContainer.recipesRepository).create()
-    }
-
+    val viewModel: CategoriesViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
     Column(
