@@ -23,9 +23,10 @@ class RecipesRepositoryImpl @Inject constructor(
 ) : RecipesRepository {
     private val categoryDao = database.categoryDao()
     private val recipeDao = database.recipeDao()
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun getCategories(): Flow<List<CategoryDto>> {
-        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+        scope.launch {
             try {
                 val categories = recipesApiService.getCategories()
                 categoryDao.insertCategories(categories = categories.map { it.toEntity() })
@@ -41,7 +42,7 @@ class RecipesRepositoryImpl @Inject constructor(
     }
 
     override fun getRecipesByCategory(categoryId: Int): Flow<List<RecipeDto>> {
-        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+        scope.launch {
             try {
                 val recipes = recipesApiService.getRecipesByCategory(categoryId)
                 recipeDao.insertRecipes(recipes = recipes.map { it.toEntity(categoryId) })
@@ -57,7 +58,7 @@ class RecipesRepositoryImpl @Inject constructor(
     }
 
     override fun getRecipe(recipeId: Int): Flow<RecipeDto?> {
-        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+        scope.launch {
             try {
                 val recipe = recipesApiService.getRecipe(recipeId = recipeId)
                 val categoryId = recipeDao.getRecipeById(recipeId).first()?.categoryId ?: 0
