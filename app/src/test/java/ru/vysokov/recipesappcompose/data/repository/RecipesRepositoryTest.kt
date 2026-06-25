@@ -1,7 +1,8 @@
 package ru.vysokov.recipesappcompose.data.repository
 
-import android.database.sqlite.SQLiteException
 import app.cash.turbine.test
+import fixtures.CategoryTestFixtures
+import fixtures.RecipeTestFixtures
 import io.mockk.Runs
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
@@ -11,6 +12,7 @@ import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import okio.IOException
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -19,13 +21,11 @@ import ru.vysokov.recipesappcompose.core.network.api.RecipesApiService
 import ru.vysokov.recipesappcompose.data.database.RecipesDatabase
 import ru.vysokov.recipesappcompose.data.database.dao.CategoryDao
 import ru.vysokov.recipesappcompose.data.database.dao.RecipeDao
-import ru.vysokov.recipesappcompose.data.database.entity.CategoryEntity
-import ru.vysokov.recipesappcompose.data.database.entity.RecipeEntity
-import ru.vysokov.recipesappcompose.data.model.IngredientDto
+import ru.vysokov.recipesappcompose.data.model.toEntity
 
 class RecipesRepositoryTest {
     private val apiService = mockk<RecipesApiService>()
-    private val database = mockk<RecipesDatabase>()
+    private val database = mockk<RecipesDatabase>(relaxed = true)
     private val categoryDao = mockk<CategoryDao>()
     private val recipeDao = mockk<RecipeDao>()
 
@@ -45,15 +45,11 @@ class RecipesRepositoryTest {
 
     @Test
     fun `getCategories emits categories from database`() = runTest {
+        val count = 3
+        val categoriesFixtures = CategoryTestFixtures.createCategoryDtoList(count = count)
+
         every { categoryDao.getAllCategories() } returns flowOf(
-            listOf(
-                CategoryEntity(
-                    id = 1,
-                    name = "Завтраки",
-                    description = "Утренние блюда",
-                    imageUrl = "breakfast.jpg"
-                )
-            )
+            categoriesFixtures.map { it.toEntity() }
         )
 
         coEvery { apiService.getCategories() } returns emptyList()
@@ -62,10 +58,10 @@ class RecipesRepositoryTest {
         repository.getCategories().test {
             val categories = awaitItem()
 
-            assertEquals(1, categories.size)
-            assertEquals("Завтраки", categories[0].title)
-            assertEquals("Утренние блюда", categories[0].description)
-            assertEquals("breakfast.jpg", categories[0].imageUrl)
+            assertEquals(count, categories.size)
+            assertEquals(categoriesFixtures[0].title, categories[0].title)
+            assertEquals(categoriesFixtures[0].description, categories[0].description)
+            assertEquals(categoriesFixtures[0].imageUrl, categories[0].imageUrl)
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -73,27 +69,23 @@ class RecipesRepositoryTest {
 
     @Test
     fun `getCategories still emits data when api throws exception`() = runTest {
+        val count = 3
+        val categoriesFixtures = CategoryTestFixtures.createCategoryDtoList(count = count)
+
         every { categoryDao.getAllCategories() } returns flowOf(
-            listOf(
-                CategoryEntity(
-                    id = 1,
-                    name = "Завтраки",
-                    description = "Утренние блюда",
-                    imageUrl = "breakfast.jpg"
-                )
-            )
+            categoriesFixtures.map { it.toEntity() }
         )
 
-        coEvery { apiService.getCategories() } throws SQLiteException("Network error")
+        coEvery { apiService.getCategories() } throws IOException("IO Exception")
         coEvery { categoryDao.insertCategories(any()) } just Runs
 
         repository.getCategories().test {
             val categories = awaitItem()
 
-            assertEquals(1, categories.size)
-            assertEquals("Завтраки", categories[0].title)
-            assertEquals("Утренние блюда", categories[0].description)
-            assertEquals("breakfast.jpg", categories[0].imageUrl)
+            assertEquals(count, categories.size)
+            assertEquals(categoriesFixtures[0].title, categories[0].title)
+            assertEquals(categoriesFixtures[0].description, categories[0].description)
+            assertEquals(categoriesFixtures[0].imageUrl, categories[0].imageUrl)
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -104,23 +96,10 @@ class RecipesRepositoryTest {
     @Test
     fun `getRecipesByCategory returns flow filtered by categoryId`() = runTest {
         val categoryId = 1
-        val recipe = RecipeEntity(
-            id = 1,
-            title = "Чизбургер с беконом",
-            categoryId = 1,
-            imageUrl = "cheeseburger.jpg",
-            ingredients = listOf(
-                IngredientDto("0.4", "кг", "говяжий фарш"),
-                IngredientDto("4.0", "шт", "ломтика бекона")
-            ),
-            method = listOf(
-                "Обжарьте бекон на сковороде до хрустящей корочки, отложите на бумажное полотенце.",
-                "Сформируйте из фарша 4 котлеты, обжарьте с каждой стороны по 4 минуты.",
-            )
-        )
+        val recipe = RecipeTestFixtures.createRecipeDto()
 
         every { recipeDao.getRecipesByCategory(categoryId) } returns flowOf(
-            listOf(recipe)
+            listOf(recipe.toEntity(categoryId))
         )
 
         coEvery { apiService.getRecipesByCategory(categoryId) } returns emptyList()
@@ -129,21 +108,11 @@ class RecipesRepositoryTest {
             val recipes = awaitItem()
 
             assertEquals(1, recipes.size)
-            assertEquals(1, recipes[0].id)
-            assertEquals("Чизбургер с беконом", recipes[0].title)
-            assertEquals("cheeseburger.jpg", recipes[0].imageUrl)
-            assertEquals(
-                listOf(
-                    IngredientDto("0.4", "кг", "говяжий фарш"),
-                    IngredientDto("4.0", "шт", "ломтика бекона")
-                ), recipes[0].ingredients
-            )
-            assertEquals(
-                listOf(
-                    "Обжарьте бекон на сковороде до хрустящей корочки, отложите на бумажное полотенце.",
-                    "Сформируйте из фарша 4 котлеты, обжарьте с каждой стороны по 4 минуты.",
-                ), recipes[0].method
-            )
+            assertEquals(recipe.id, recipes[0].id)
+            assertEquals(recipe.title, recipes[0].title)
+            assertEquals(recipe.imageUrl, recipes[0].imageUrl)
+            assertEquals(recipe.ingredients, recipes[0].ingredients)
+            assertEquals(recipe.method, recipes[0].method)
 
             cancelAndIgnoreRemainingEvents()
         }

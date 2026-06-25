@@ -1,5 +1,6 @@
 package ru.vysokov.recipesappcompose.data.model
 
+import fixtures.RecipeTestFixtures
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 import ru.vysokov.recipesappcompose.core.Constants
@@ -9,21 +10,9 @@ import ru.vysokov.recipesappcompose.features.recipes.presentation.model.toUiMode
 class RecipeDtoMapperTest {
     @Test
     fun `maps DTO to UI model correctly`() {
-        val dto = RecipeDto(
-            id = 1,
-            title = "Паста карбонара",
-            ingredients = listOf(
-                IngredientDto(
-                    quantity = "200",
-                    unitOfMeasure = "г",
-                    description = "Паста"
-                )
-            ),
-            method = listOf("Отварить", "Смешать"),
-            imageUrl = "pasta.jpg"
-        )
-
+        val dto = RecipeTestFixtures.createRecipeDto()
         val result = dto.toUiModel()
+
         assertEquals(1, result.id)
         assertEquals("Паста карбонара", result.title)
         assertEquals(
@@ -41,41 +30,19 @@ class RecipeDtoMapperTest {
 
     @Test
     fun `prepends base url to relative imageUrl`() {
-        val dto = RecipeDto(
-            id = 1,
-            title = "Паста карбонара",
-            ingredients = listOf(
-                IngredientDto(
-                    quantity = "200",
-                    unitOfMeasure = "г",
-                    description = "Паста"
-                )
-            ),
-            method = listOf("Отварить", "Смешать"),
-            imageUrl = "pasta.jpg"
-        )
-
+        val dto = RecipeTestFixtures.createRecipeDto()
         val result = dto.toUiModel()
+
         assertEquals("${Constants.IMAGES_BASE_URL}pasta.jpg", result.imageUrl)
     }
 
     @Test
     fun `preserves full imageUrl starting with http`() {
-        val dto = RecipeDto(
-            id = 1,
-            title = "Паста карбонара",
-            ingredients = listOf(
-                IngredientDto(
-                    quantity = "200",
-                    unitOfMeasure = "г",
-                    description = "Паста"
-                )
-            ),
-            method = listOf("Отварить", "Смешать"),
+        val dto = RecipeTestFixtures.createRecipeDto(
             imageUrl = "http://example.com/images/pasta.jpg"
         )
-
         val result = dto.toUiModel()
+
         assertEquals("http://example.com/images/pasta.jpg", result.imageUrl)
     }
 }
